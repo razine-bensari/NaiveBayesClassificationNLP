@@ -18,3 +18,11 @@ FOR BYOM
 We think some languages will have more recurring characters given certain type of punctuation marks and would contribute greatly to the overall classifier.
 
 Look at which additive smoothing value the model performs the best.
+
+
+
+In unigram, one possible explanation of why it performs poorly is that,
+even though some languages may have character frequency different from other laguages (e is more present in spanish than german for example),
+it may perform poorly because the test set of training data does not contain characters that emphasizes this gap the would be found if more training data was available
+or if the test set had a better representation of the languages feature
+
