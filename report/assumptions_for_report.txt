@@ -1,0 +1,20 @@
+These are the following assumptions for BYOM.
+
+What we know from the data is that they are tweets.
+
+- Assumption 1: case-sensitive models are not needed.
+Why?: Since they are tweet, we know by experience that most people do not tweet using proper grammar in regards to case sensitivity.
+We believe that extra columns in our n-gram only adds overhead compared to the benefit they bring in terms of accuracy.
+We will confirm on infirm this assumption for all languages based on our models.
+
+- Assumption 2: Out of range character (Outside vocabulary V) will mostly be emoticons and grammar signs (like "",:; etc...) for V=2.
+Why>: Since we are dealing with tweets where most of the time people tweeting are expressing their opinions, most of those tweets are written in a way to be
+understood by people reading them. This is why out of range characters (characters out of the vocabulary V) are mostly emoticons because rarely people
+
+
+
+FOR BYOM
+- Assumption: Have a dedicated vocabulary for each languages that considers both the alphabet of that language (with signs), and the punctation marks (;,;'" ...).
+We think some languages will have more recurring characters given certain type of punctuation marks and would contribute greatly to the overall classifier.
+
+Look at which additive smoothing value the model performs the best.
