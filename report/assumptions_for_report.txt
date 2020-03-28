@@ -26,3 +26,6 @@ even though some languages may have character frequency different from other lag
 it may perform poorly because the test set of training data does not contain characters that emphasizes this gap the would be found if more training data was available
 or if the test set had a better representation of the languages feature
 
+
+Say that in most languages, the character frequency is more or less the same (google up stats for that.) therefore, since the character frequency is more or less the same,
+they dont tell us much about the feature of ech languages, this is why its not reliable and classification is bad.
