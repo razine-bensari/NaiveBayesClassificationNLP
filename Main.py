@@ -1,6 +1,6 @@
 """
 Author: Razine Ahmed Bensari, bensaria97@gmail.com
-Author: Annes Cherrid, annes.cherid@gmail.com
+Author: Annes Cherrid, cherid.annes@gmail.com
 """
 from NaiveBayesClassifier import NaiveBayesClassifier
 

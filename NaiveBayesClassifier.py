@@ -1,6 +1,7 @@
 """
 Author: Razine Ahmed Bensari, bensaria97@gmail.com
-Author: Annes Cherrid, annes.cherid@gmail.com
+Author: Annes Cherrid, cherid.annes@gmail.com
+https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
 """
 import numpy as np
 import string
@@ -67,6 +68,8 @@ class NaiveBayesClassifier:
         self.BOW_V1 = dict.fromkeys("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0)
         self.BOW_V2 = dict()
         self.language = ""
+        self.probability = 0
+        self.tweetCount = 0
 
     def constructModel(self):
         self.buildNGrams()
@@ -109,9 +112,13 @@ class NaiveBayesClassifier:
 
     def buildUnigramsWhenVocabularyIsZero(self):
         self.language = getLanguage(self.trainingFile.split("_"))
+        tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
                 tweetArray = line.split("\t")
                 getFrequencies(self.BOW_V0, tweetArray[3])
+                tweetCount += 1
+        self.tweetCount = tweetCount
+        print("Tweet count: " + str(tweetCount))
         print(self.BOW_V0)
         addSmoothing(self.BOW_V0, self.delta)
