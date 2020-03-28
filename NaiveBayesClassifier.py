@@ -19,12 +19,14 @@ def getFrequencies(BOW, tweet):
             BOW[c] += 1
 
 
-def buildUnigramsWhenVocabularyIsOne():
-    None
-
-
-def buildUnigramsWhenVocabularyIsTwo():
-    None
+# BOW is a Bag of Word dictionary using alphabet as keys and frequencies as values
+def getFrequenciesForV2(BOW, tweet):
+    for c in tweet:
+        if c in BOW:
+            BOW[c] += 1
+        if c not in BOW and c.isalpha():
+            BOW[c] = 1
+    BOW["<NOT-APPEAR>"] = 0
 
 
 def buildBigramsWhenVocabularyIsZero():
@@ -94,7 +96,7 @@ class NaiveBayesClassifier:
         if self.vocabulary == 1:
             self.buildUnigramsWhenVocabularyIsOne()
         if self.vocabulary == 2:
-            buildUnigramsWhenVocabularyIsTwo()
+            self.buildUnigramsWhenVocabularyIsTwo()
 
     def buildBigrams(self):
         if self.vocabulary == 0:
@@ -138,6 +140,19 @@ class NaiveBayesClassifier:
         print(self.BOW_V1)
         addSmoothing(self.BOW_V1, self.delta)
 
+    def buildUnigramsWhenVocabularyIsTwo(self):
+        self.language = getLanguage(self.trainingFile.split("_"))
+        tweetCount = 0
+        with open(self.trainingFile, "r") as file:
+            for line in file:
+                tweetArray = line.split("\t")
+                getFrequenciesForV2(self.BOW_V2, tweetArray[3])
+                tweetCount += 1
+        self.tweetCount = tweetCount
+        print("Tweet count: " + str(tweetCount))
+        print(self.BOW_V2)
+        addSmoothing(self.BOW_V2, self.delta)
+
     def calculateProbability(self, tweet):
         if self.n == 1:
             if self.vocabulary == 0:
@@ -145,7 +160,7 @@ class NaiveBayesClassifier:
             elif self.vocabulary == 1:
                 return self.calculate_probability_n1_v1(tweet)
             elif self.vocabulary == 2:
-                pass
+                return self.calculate_probability_n1_v2(tweet)
             else:
                 print("Invalid V")
         elif self.n == 2:
@@ -196,5 +211,23 @@ class NaiveBayesClassifier:
                 char_ratio = self.BOW_V1.get(c) / total_chars
                 sum_of_prob += math.log(char_ratio, 10)
                 print("char probablity: " + str(self.BOW_V1.get(c) / total_chars))
+        self.probability = prob_of_tweet_base10 + sum_of_prob
+        return self.probability
+
+    def calculate_probability_n1_v2(self, tweet):
+        sum_of_prob = 0
+        total_chars = sum(self.BOW_V2.values())
+        print("total char in bow: " + str(total_chars))
+        tweet_ratio = self.tweetCount / self.totalTweetCount
+        print("Tweet probablity: " + str(tweet_ratio))
+        prob_of_tweet_base10 = math.log(tweet_ratio, 10)
+        for c in tweet:
+            if c in self.BOW_V2:
+                char_ratio = self.BOW_V2.get(c) / total_chars
+                sum_of_prob += math.log(char_ratio, 10)
+                print("char probablity: " + str(self.BOW_V2.get(c) / total_chars))
+            if c not in self.BOW_V2 and c.isalpha():
+                print("This character was not in training: " + str(c))
+                #TODO get more info on what to do here
         self.probability = prob_of_tweet_base10 + sum_of_prob
         return self.probability
