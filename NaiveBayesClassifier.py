@@ -56,6 +56,24 @@ def addSmoothing(BOW, delta):
             BOW[c] += delta
 
 
+def getBigrams(BOW_V0, tweet):
+    bigrams = []
+    i = 0
+    max_length = len(tweet)
+    while i < max_length:
+        if i+1 >= max_length:
+            break
+        elif tweet[i] in BOW_V0 and tweet[i + 1] in BOW_V0:
+            bigrams.append([tweet[i], tweet[i+1]])
+        i += 1
+    return bigrams
+
+
+def addSmoothingBigrams(array, delta):
+    for x in np.nditer(array, op_flags=['readwrite']):
+        x[...] = x + delta
+
+
 class NaiveBayesClassifier:
     def __init__(self, vocabulary, n, delta, trainingFile, language, totalTweetCount):
         self.typeOfNGrams = None
@@ -98,7 +116,7 @@ class NaiveBayesClassifier:
         if self.vocabulary == 0:
             self.buildBigramsWhenVocabularyIsZero()
         if self.vocabulary == 1:
-            buildBigramsWhenVocabularyIsOne()
+            self.buildBigramsWhenVocabularyIsOne()
         if self.vocabulary == 2:
             buildBigramsWhenVocabularyIsTwo()
 
@@ -229,15 +247,49 @@ class NaiveBayesClassifier:
         return self.probability
 
     def buildBigramsWhenVocabularyIsZero(self):
-        # self.array = np.zeros(shape=(27, 27)) # extra row and column for <NOT-APPEAR>
-        # self.language = getLanguage(self.trainingFile.split("_"))
-        # tweetCount = 0
-        # with open(self.trainingFile, "r") as file:
-        #     for line in file:
-        #         tweetArray = line.split("\t")
-        #         getFrequencies(self.BOW_V0, tweetArray[3])
-        #         tweetCount += 1
-        # self.tweetCount = tweetCount
-        # print("Tweet count: " + str(tweetCount))
-        # print(self.BOW_V0)
-        # addSmoothing(self.BOW_V0, self.delta)
+        self.array = np.zeros([27, 27]) # extra row and column for <NOT-APPEAR>
+        self.language = getLanguage(self.trainingFile.split("_"))
+        tweetCount = 0
+        with open(self.trainingFile, "r") as file:
+            for line in file:
+                tweetArray = line.split("\t")
+                bigrams_couple = getBigrams(self.BOW_V0, tweetArray[3])
+                self.populateBigram_V0(bigrams_couple, self.array)
+                tweetCount += 1
+        self.tweetCount = tweetCount
+        print("Tweet count: " + str(tweetCount))
+        print("This is the vocabulary: ")
+        print(self.BOW_V0)
+        addSmoothingBigrams(self.array, self.delta)
+
+    def buildBigramsWhenVocabularyIsOne(self):
+        self.array = np.zeros([53, 53])  # extra row and column for <NOT-APPEAR>
+        self.language = getLanguage(self.trainingFile.split("_"))
+        tweetCount = 0
+        with open(self.trainingFile, "r") as file:
+            for line in file:
+                tweetArray = line.split("\t")
+                bigrams_couple = getBigrams(self.BOW_V1, tweetArray[3])
+                self.populateBigram_V1(bigrams_couple, self.array)
+                tweetCount += 1
+        self.tweetCount = tweetCount
+        print("Tweet count: " + str(tweetCount))
+        print("This is the vocabulary: ")
+        print(self.BOW_V1)
+        addSmoothingBigrams(self.array, self.delta)
+
+    def populateBigram_V0(self, bigrams_couple, array):
+        for bigram in bigrams_couple:
+            array[string.ascii_lowercase.index(bigram[0]), string.ascii_lowercase.index(bigram[1])] += 1
+
+    def populateBigram_V1(self, bigrams_couple, array):
+        for bigram in bigrams_couple:
+            if bigram[0].islower() and bigram[1].islower():
+                array[string.ascii_lowercase.index(bigram[0]), string.ascii_lowercase.index(bigram[1])] += 1
+            if bigram[0].islower() and bigram[1].isupper():
+                array[string.ascii_lowercase.index(bigram[0]), string.ascii_uppercase.index(bigram[1])+26] += 1
+            if bigram[0].isupper() and bigram[1].islower():
+                array[string.ascii_uppercase.index(bigram[0])+26, string.ascii_lowercase.index(bigram[1])] += 1
+            if bigram[0].isupper() and bigram[1].isupper():
+                array[string.ascii_uppercase.index(bigram[0])+26, string.ascii_uppercase.index(bigram[1])+26] += 1
+
