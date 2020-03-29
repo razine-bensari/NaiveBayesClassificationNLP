@@ -29,10 +29,6 @@ def getFrequenciesForV2(BOW, tweet):
     BOW["<NOT-APPEAR>"] = 0
 
 
-def buildBigramsWhenVocabularyIsZero():
-    None
-
-
 def buildBigramsWhenVocabularyIsOne():
     None
 
@@ -100,7 +96,7 @@ class NaiveBayesClassifier:
 
     def buildBigrams(self):
         if self.vocabulary == 0:
-            buildBigramsWhenVocabularyIsZero()
+            self.buildBigramsWhenVocabularyIsZero()
         if self.vocabulary == 1:
             buildBigramsWhenVocabularyIsOne()
         if self.vocabulary == 2:
@@ -231,3 +227,17 @@ class NaiveBayesClassifier:
                 #TODO get more info on what to do here
         self.probability = prob_of_tweet_base10 + sum_of_prob
         return self.probability
+
+    def buildBigramsWhenVocabularyIsZero(self):
+        # self.array = np.zeros(shape=(27, 27)) # extra row and column for <NOT-APPEAR>
+        # self.language = getLanguage(self.trainingFile.split("_"))
+        # tweetCount = 0
+        # with open(self.trainingFile, "r") as file:
+        #     for line in file:
+        #         tweetArray = line.split("\t")
+        #         getFrequencies(self.BOW_V0, tweetArray[3])
+        #         tweetCount += 1
+        # self.tweetCount = tweetCount
+        # print("Tweet count: " + str(tweetCount))
+        # print(self.BOW_V0)
+        # addSmoothing(self.BOW_V0, self.delta)
