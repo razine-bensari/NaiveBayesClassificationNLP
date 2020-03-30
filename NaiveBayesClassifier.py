@@ -424,5 +424,7 @@ class NaiveBayesClassifier:
 
     def populateTrigram_V0(self, trigram_couple, array):
         for trigram in trigram_couple:
-            array[string.ascii_lowercase.index(trigram[0]), string.ascii_lowercase.index(
-                trigram[1]), string.ascii_lowercase.index(trigram[2])] += 1
+            x = string.ascii_lowercase.index(trigram[0])
+            y = string.ascii_lowercase.index(trigram[1])
+            z = string.ascii_lowercase.index(trigram[2])
+            array[z, x, y] += 1
