@@ -41,8 +41,8 @@ from NaiveBayesClassifier import NaiveBayesClassifier
 # print("model_pt: " + str(prob_base10_pt))
 # print("model_pt: " + str(prob_base10_eu))
 
-# model_ca = NaiveBayesClassifier(2, 2, 0, "./training_files/ca_training-tweets.txt", "ca", 18318)
-# model_ca.constructModel()
+model_ca = NaiveBayesClassifier(0, 3, 0, "./training_files/ca_training-tweets.txt", "ca", 18318)
+model_ca.constructModel()
 # prob_base10_ca = model_ca.calculateProbability("He tingut l'honor d Presidir l'acte de presentació del llibre de fotos cedides x la familia Solà-Llirinos acte molt emotiu")
 # print("Tweet is ca.")
 # print("model_ca: " + str(prob_base10_ca))

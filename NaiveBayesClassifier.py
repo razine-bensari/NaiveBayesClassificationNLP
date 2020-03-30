@@ -29,10 +29,6 @@ def getFrequenciesForV2(BOW, tweet):
     BOW["<NOT-APPEAR>"] = 0
 
 
-def buildTrigramsWhenVocabularyIsZero():
-    None
-
-
 def buildTrigramsWhenVocabularyIsOne():
     None
 
@@ -61,7 +57,25 @@ def getBigrams(BOW_V0, tweet):
     return bigrams
 
 
+def getTrigrams(BOW_V0, tweet):
+    trigrams = []
+    i = 0
+    max_length = len(tweet)
+    while i < max_length:
+        if i + 2 >= max_length:
+            break
+        elif tweet[i] in BOW_V0 and tweet[i + 1] in BOW_V0 and tweet[i + 2] in BOW_V0:
+            trigrams.append([tweet[i], tweet[i + 1], tweet[i + 2]])
+        i += 1
+    return trigrams
+
+
 def addSmoothingBigrams(array, delta):
+    for x in np.nditer(array, op_flags=['readwrite']):
+        x[...] = x + delta
+
+
+def addSmoothingTrigrams(array, delta):
     for x in np.nditer(array, op_flags=['readwrite']):
         x[...] = x + delta
 
@@ -115,7 +129,7 @@ class NaiveBayesClassifier:
 
     def buildTrigrams(self):
         if self.vocabulary == 0:
-            buildTrigramsWhenVocabularyIsZero()
+            self.buildTrigramsWhenVocabularyIsZero()
         if self.vocabulary == 1:
             buildTrigramsWhenVocabularyIsOne()
         if self.vocabulary == 2:
@@ -248,7 +262,8 @@ class NaiveBayesClassifier:
             for line in file:
                 tweetArray = line.split("\t")
                 bigrams_couple = getBigrams(self.BOW_V0, tweetArray[3])
-                self.populateBigram_V0(bigrams_couple, self.array)
+                if len(bigrams_couple):
+                    self.populateBigram_V0(bigrams_couple, self.array)
                 tweetCount += 1
         self.tweetCount = tweetCount
         print("Tweet count: " + str(tweetCount))
@@ -264,7 +279,8 @@ class NaiveBayesClassifier:
             for line in file:
                 tweetArray = line.split("\t")
                 bigrams_couple = getBigrams(self.BOW_V1, tweetArray[3])
-                self.populateBigram_V1(bigrams_couple, self.array)
+                if len(bigrams_couple):
+                    self.populateBigram_V1(bigrams_couple, self.array)
                 tweetCount += 1
         self.tweetCount = tweetCount
         print("Tweet count: " + str(tweetCount))
@@ -274,14 +290,16 @@ class NaiveBayesClassifier:
 
     def buildBigramsWhenVocabularyIsTwo(self):
         self.map_char_to_index = self.get_map_vocabular(self.trainingFile)
-        self.array = np.zeros([len(self.map_char_to_index), len(self.map_char_to_index)])  # Not appear column is already there
+        self.array = np.zeros(
+            [len(self.map_char_to_index), len(self.map_char_to_index)])  # Not appear column is already there
         self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
                 tweetArray = line.split("\t")
                 bigrams_couple = getBigrams(self.map_char_to_index, tweetArray[3])
-                self.populateBigram_V2(bigrams_couple, self.array, self.map_char_to_index)
+                if len(bigrams_couple):
+                    self.populateBigram_V2(bigrams_couple, self.array, self.map_char_to_index)
                 tweetCount += 1
         self.tweetCount = tweetCount
         print("Tweet count: " + str(tweetCount))
@@ -380,8 +398,31 @@ class NaiveBayesClassifier:
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         bigrams_couple = getBigrams(self.BOW_V0, tweet)
         for bigram in bigrams_couple:
-            bigram_ratio = self.array[self.map_char_to_index[bigram[0]], self.map_char_to_index[bigram[1]]] / total_chars_row[self.map_char_to_index[bigram[0]]]
+            bigram_ratio = self.array[self.map_char_to_index[bigram[0]], self.map_char_to_index[bigram[1]]] / \
+                           total_chars_row[self.map_char_to_index[bigram[0]]]
             sum_of_prob += math.log(bigram_ratio, 10)
             print("bigram probablity: " + str(bigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
+
+    def buildTrigramsWhenVocabularyIsZero(self):
+        self.array = np.zeros([27, 27, 27])  # extra row and column for <NOT-APPEAR>
+        self.language = getLanguage(self.trainingFile.split("_"))
+        tweetCount = 0
+        with open(self.trainingFile, "r") as file:
+            for line in file:
+                tweetArray = line.split("\t")
+                trigram_couple = getTrigrams(self.BOW_V0, tweetArray[3])
+                if len(trigram_couple):
+                    self.populateTrigram_V0(trigram_couple, self.array)
+                tweetCount += 1
+        self.tweetCount = tweetCount
+        print("Tweet count: " + str(tweetCount))
+        print("This is the vocabulary: ")
+        print(self.BOW_V0)
+        addSmoothingTrigrams(self.array, self.delta)
+
+    def populateTrigram_V0(self, trigram_couple, array):
+        for trigram in trigram_couple:
+            array[string.ascii_lowercase.index(trigram[0]), string.ascii_lowercase.index(
+                trigram[1]), string.ascii_lowercase.index(trigram[2])] += 1
