@@ -29,10 +29,6 @@ def getFrequenciesForV2(BOW, tweet):
     BOW["<NOT-APPEAR>"] = 0
 
 
-def buildTrigramsWhenVocabularyIsOne():
-    None
-
-
 def buildTrigramsWhenVocabularyIsTwo():
     None
 
@@ -131,7 +127,7 @@ class NaiveBayesClassifier:
         if self.vocabulary == 0:
             self.buildTrigramsWhenVocabularyIsZero()
         if self.vocabulary == 1:
-            buildTrigramsWhenVocabularyIsOne()
+            self.buildTrigramsWhenVocabularyIsOne()
         if self.vocabulary == 2:
             buildTrigramsWhenVocabularyIsTwo()
 
@@ -195,9 +191,9 @@ class NaiveBayesClassifier:
                 print("Invalid V")
         elif self.n == 3:
             if self.vocabulary == 0:
-                pass
+                return self.calculate_probability_n3_v0(tweet)
             elif self.vocabulary == 1:
-                pass
+                return self.calculate_probability_n3_v1(tweet)
             elif self.vocabulary == 2:
                 pass
             else:
@@ -322,22 +318,37 @@ class NaiveBayesClassifier:
 
     def populateBigram_V0(self, bigrams_couple, array):
         for bigram in bigrams_couple:
-            array[string.ascii_lowercase.index(bigram[0]), string.ascii_lowercase.index(bigram[1])] += 1
+            x = string.ascii_lowercase.index(bigram[0])
+            y = string.ascii_lowercase.index(bigram[1])
+            array[x, y] += 1
 
     def populateBigram_V1(self, bigrams_couple, array):
         for bigram in bigrams_couple:
             if bigram[0].islower() and bigram[1].islower():
-                array[string.ascii_lowercase.index(bigram[0]), string.ascii_lowercase.index(bigram[1])] += 1
-            if bigram[0].islower() and bigram[1].isupper():
-                array[string.ascii_lowercase.index(bigram[0]), string.ascii_uppercase.index(bigram[1]) + 26] += 1
-            if bigram[0].isupper() and bigram[1].islower():
-                array[string.ascii_uppercase.index(bigram[0]) + 26, string.ascii_lowercase.index(bigram[1])] += 1
-            if bigram[0].isupper() and bigram[1].isupper():
-                array[string.ascii_uppercase.index(bigram[0]) + 26, string.ascii_uppercase.index(bigram[1]) + 26] += 1
+                x = string.ascii_lowercase.index(bigram[0])
+                y = string.ascii_lowercase.index(bigram[1])
+                array[x, y] += 1
+            elif bigram[0].islower() and bigram[1].isupper():
+                x = string.ascii_lowercase.index(bigram[0])
+                y = string.ascii_uppercase.index(bigram[1])
+                array[x, y + 26] += 1
+            elif bigram[0].isupper() and bigram[1].islower():
+                x = string.ascii_uppercase.index(bigram[0])
+                y = string.ascii_lowercase.index(bigram[1])
+                array[x + 26, y] += 1
+            elif bigram[0].isupper() and bigram[1].isupper():
+                x = string.ascii_uppercase.index(bigram[0])
+                y = string.ascii_uppercase.index(bigram[1])
+                array[x + 26, y + 26] += 1
+            else:
+                print("Not able to populate bigram")
+                print(bigram)
 
     def populateBigram_V2(self, bigrams_couple, array, map_char_to_index):
         for bigram in bigrams_couple:
-            array[int(map_char_to_index[bigram[0]]), int(map_char_to_index[bigram[1]])] += 1
+            x = int(map_char_to_index[bigram[0]])
+            y = int(map_char_to_index[bigram[1]])
+            array[x, y] += 1
 
     def calculate_probability_n2_v0(self, tweet):
         sum_of_prob = 0
@@ -348,9 +359,9 @@ class NaiveBayesClassifier:
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         bigrams_couple = getBigrams(self.BOW_V0, tweet)
         for bigram in bigrams_couple:
-            bigram_ratio = self.array[
-                               string.ascii_lowercase.index(bigram[0]), string.ascii_lowercase.index(bigram[1])] / \
-                           total_chars_row[string.ascii_lowercase.index(bigram[0])]
+            x = string.ascii_lowercase.index(bigram[0])
+            y = string.ascii_lowercase.index(bigram[1])
+            bigram_ratio = self.array[x, y] / total_chars_row[x]
             sum_of_prob += math.log(bigram_ratio, 10)
             print("bigram probablity: " + str(bigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
@@ -366,26 +377,33 @@ class NaiveBayesClassifier:
         bigrams_couple = getBigrams(self.BOW_V1, tweet)
         for bigram in bigrams_couple:
             if bigram[0].islower() and bigram[1].islower():
-                bigram_ratio = self.array[
-                                   string.ascii_lowercase.index(bigram[0]), string.ascii_lowercase.index(bigram[1])] / \
-                               total_chars_row[string.ascii_lowercase.index(bigram[0])]
+                x = string.ascii_lowercase.index(bigram[0])
+                y = string.ascii_lowercase.index(bigram[1])
+                bigram_ratio = self.array[x, y] / total_chars_row[x]
                 sum_of_prob += math.log(bigram_ratio, 10)
                 print("bigram probablity: " + str(bigram_ratio))
-            if bigram[0].islower() and bigram[1].isupper():
-                bigram_ratio = self.array[string.ascii_lowercase.index(bigram[0]), string.ascii_uppercase.index(
-                    bigram[1]) + 26] / total_chars_row[string.ascii_lowercase.index(bigram[0])]
+            elif bigram[0].islower() and bigram[1].isupper():
+                x = string.ascii_lowercase.index(bigram[0])
+                y = string.ascii_uppercase.index(bigram[1])
+                bigram_ratio = self.array[x, y + 26] / total_chars_row[x]
                 sum_of_prob += math.log(bigram_ratio, 10)
                 print("bigram probablity: " + str(bigram_ratio))
-            if bigram[0].isupper() and bigram[1].islower():
-                bigram_ratio = self.array[string.ascii_uppercase.index(bigram[0]) + 26, string.ascii_lowercase.index(
-                    bigram[1])] / total_chars_row[string.ascii_uppercase.index(bigram[0]) + 26]
+            elif bigram[0].isupper() and bigram[1].islower():
+                x = string.ascii_uppercase.index(bigram[0])
+                y = string.ascii_lowercase.index(bigram[1])
+                bigram_ratio = self.array[x + 26, y] / total_chars_row[x + 26]
                 sum_of_prob += math.log(bigram_ratio, 10)
                 print("bigram probablity: " + str(bigram_ratio))
-            if bigram[0].isupper() and bigram[1].isupper():
-                bigram_ratio = self.array[string.ascii_uppercase.index(bigram[0]) + 26, string.ascii_uppercase.index(
-                    bigram[1]) + 26] / total_chars_row[string.ascii_uppercase.index(bigram[0]) + 26]
+            elif bigram[0].isupper() and bigram[1].isupper():
+                x = string.ascii_uppercase.index(bigram[0])
+                y = string.ascii_uppercase.index(bigram[1])
+                bigram_ratio = self.array[x + 26, y + 26] / total_chars_row[x + 26]
                 sum_of_prob += math.log(bigram_ratio, 10)
                 print("bigram probablity: " + str(bigram_ratio))
+            else:
+                print("Not able to calculate probability")
+                print(bigram)
+                return 0.0
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
 
@@ -398,15 +416,16 @@ class NaiveBayesClassifier:
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         bigrams_couple = getBigrams(self.BOW_V0, tweet)
         for bigram in bigrams_couple:
-            bigram_ratio = self.array[self.map_char_to_index[bigram[0]], self.map_char_to_index[bigram[1]]] / \
-                           total_chars_row[self.map_char_to_index[bigram[0]]]
+            x = self.map_char_to_index[bigram[0]]
+            y = self.map_char_to_index[bigram[1]]
+            bigram_ratio = self.array[x, y] / total_chars_row[x]
             sum_of_prob += math.log(bigram_ratio, 10)
             print("bigram probablity: " + str(bigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
 
     def buildTrigramsWhenVocabularyIsZero(self):
-        self.array = np.zeros([27, 27, 27])  # extra row and column for <NOT-APPEAR>
+        self.array = np.zeros([27, 27, 27])
         self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
@@ -422,9 +441,165 @@ class NaiveBayesClassifier:
         print(self.BOW_V0)
         addSmoothingTrigrams(self.array, self.delta)
 
+    def buildTrigramsWhenVocabularyIsOne(self):
+        self.array = np.zeros([53, 53, 53])
+        self.language = getLanguage(self.trainingFile.split("_"))
+        tweetCount = 0
+        with open(self.trainingFile, "r") as file:
+            for line in file:
+                tweetArray = line.split("\t")
+                trigram_couple = getTrigrams(self.BOW_V1, tweetArray[3])
+                if len(trigram_couple):
+                    self.populateTrigram_V1(trigram_couple, self.array)
+                tweetCount += 1
+        self.tweetCount = tweetCount
+        print("Tweet count: " + str(tweetCount))
+        print("This is the vocabulary: ")
+        print(self.BOW_V1)
+        addSmoothingTrigrams(self.array, self.delta)
+
     def populateTrigram_V0(self, trigram_couple, array):
         for trigram in trigram_couple:
             x = string.ascii_lowercase.index(trigram[0])
             y = string.ascii_lowercase.index(trigram[1])
             z = string.ascii_lowercase.index(trigram[2])
-            array[z, x, y] += 1
+            array[x, y, z] += 1
+
+    def populateTrigram_V1(self, trigram_couple, array):
+        for trigram in trigram_couple:
+            if trigram[0].islower() and trigram[1].islower() and trigram[2].islower():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                array[x, y, z] += 1
+            elif trigram[0].islower() and trigram[1].isupper() and trigram[2].islower():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                array[x, y + 26, z] += 1
+            elif trigram[0].isupper() and trigram[1].islower() and trigram[2].islower():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                array[x + 26, y, z] += 1
+            elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].islower():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                array[x + 26, y + 26, z] += 1
+            elif trigram[0].islower() and trigram[1].islower() and trigram[2].isupper():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                array[x, y, z + 26] += 1
+            elif trigram[0].islower() and trigram[1].isupper() and trigram[2].isupper():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                array[x, y + 26, z + 26] += 1
+            elif trigram[0].isupper() and trigram[1].islower() and trigram[2].isupper():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                array[x + 26, y, z + 26] += 1
+            elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].isupper():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                array[x + 26, y + 26, z + 26] += 1
+            else:
+                print("Not able to populate trigram")
+                print(trigram)
+
+    def calculate_probability_n3_v0(self, tweet):
+        sum_of_prob = 0
+        total_chars_matrix = self.array.sum(axis=2)
+        total_chars_row = total_chars_matrix.sum(axis=1)
+        print("total char in each row: " + str(total_chars_row))
+        tweet_ratio = self.tweetCount / self.totalTweetCount
+        print("Tweet probablity: " + str(tweet_ratio))
+        prior_of_tweet_base10 = math.log(tweet_ratio, 10)
+        trigrams_couple = getTrigrams(self.BOW_V0, tweet)
+        for trigram in trigrams_couple:
+            x = string.ascii_lowercase.index(trigram[0])
+            y = string.ascii_lowercase.index(trigram[1])
+            z = string.ascii_lowercase.index(trigram[2])
+            print(x, y, z)
+            trigram_ratio = self.array[x, y, z] / total_chars_row[x]
+            sum_of_prob += math.log(trigram_ratio, 10)
+            print("bigram probablity: " + str(trigram_ratio))
+        self.probability = prior_of_tweet_base10 + sum_of_prob
+        return self.probability
+
+    def calculate_probability_n3_v1(self, tweet):
+        sum_of_prob = 0
+        total_chars_matrix = self.array.sum(axis=2)
+        total_chars_row = total_chars_matrix.sum(axis=1)
+        print("total char in each row: " + str(total_chars_row))
+        tweet_ratio = self.tweetCount / self.totalTweetCount
+        print("Tweet probablity: " + str(tweet_ratio))
+        prior_of_tweet_base10 = math.log(tweet_ratio, 10)
+        trigrams_couple = getTrigrams(self.BOW_V1, tweet)
+        for trigram in trigrams_couple:
+            if trigram[0].islower() and trigram[1].islower() and trigram[2].islower():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                trigram_ratio = self.array[x, y, z] / total_chars_row[x]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            elif trigram[0].islower() and trigram[1].isupper() and trigram[2].islower():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                trigram_ratio = self.array[x, y + 26, z] / total_chars_row[x]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            elif trigram[0].isupper() and trigram[1].islower() and trigram[2].islower():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                trigram_ratio = self.array[x + 26, y, z] / total_chars_row[x + 26]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].islower():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_lowercase.index(trigram[2])
+                trigram_ratio = self.array[x + 26, y + 26, z] / total_chars_row[x + 26]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            elif trigram[0].islower() and trigram[1].islower() and trigram[2].isupper():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                trigram_ratio = self.array[x, y, z + 26] / total_chars_row[x]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            elif trigram[0].islower() and trigram[1].isupper() and trigram[2].isupper():
+                x = string.ascii_lowercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                trigram_ratio = self.array[x, y + 26, z + 26] / total_chars_row[x]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            elif trigram[0].isupper() and trigram[1].islower() and trigram[2].isupper():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_lowercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                trigram_ratio = self.array[x + 26, y, z + 26] / total_chars_row[x + 26]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].isupper():
+                x = string.ascii_uppercase.index(trigram[0])
+                y = string.ascii_uppercase.index(trigram[1])
+                z = string.ascii_uppercase.index(trigram[2])
+                trigram_ratio = self.array[x + 26, y + 26, z + 26] / total_chars_row[x + 26]
+                sum_of_prob += math.log(trigram_ratio, 10)
+                print("bigram probablity: " + str(trigram_ratio))
+            else:
+                print("Not able to calculate probability")
+                print(trigram)
+                return 0.0
+        self.probability = prior_of_tweet_base10 + sum_of_prob
+        return self.probability
