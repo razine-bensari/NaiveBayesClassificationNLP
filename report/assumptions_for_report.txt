@@ -29,3 +29,11 @@ or if the test set had a better representation of the languages feature
 
 Say that in most languages, the character frequency is more or less the same (google up stats for that.) therefore, since the character frequency is more or less the same,
 they dont tell us much about the feature of ech languages, this is why its not reliable and classification is bad.
+
+
+Generate classifiers with many different data  for delta 0, 0.1,0.2,0.3 ... until 1. Explain why you chose those value and which one give the most accurate results
+
+
+Also, see if instead of using vocab 0,1,2 For each languages, have its own vocab with all letters and punctuation marks
+
+Many words in the tweet are links and unsername which contains to vocabulary significance and can recude presicision when training. Those samples are not good representation of the languages
