@@ -40,7 +40,6 @@ class NBLanguageClassifier:
                 tweetArray = line.split("\t")
                 result = []
                 for model in self.arrayModel:
-                    lan = model.language
                     result.append((model.calculateProbability(tweetArray[3]), model.language))
                 highest_prob = self.get_highest_prob(result)
                 if tweetArray[2] == highest_prob[1]:  # Correct

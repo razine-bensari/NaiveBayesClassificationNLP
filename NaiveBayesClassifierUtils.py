@@ -7,6 +7,7 @@ Helps clean the data and provide insight on the classifier and produce output fi
 """
 from enum import Enum
 from NBLanguageClassifier import NBLanguageClassifier
+from BYONBC import BYONBC
 import time
 
 class Language(Enum):
@@ -56,6 +57,11 @@ def cleanTrainingData():
         fEN.close()
         fPT.close()
 
+def trainBYONBC():
+    TweetClassifier = BYONBC()
+    TweetClassifier.trainClassifier()
+    TweetClassifier.testClassifier()
+
 def trainAllNBLanguageClassifier():
     startP = time.time()
     for v in range(3):
@@ -79,7 +85,113 @@ def trainAllNBLanguageClassifier():
     stopP = time.time()
     print("Time for the whole process: " + str(round(stopP - startP, 1)))
 
+def generateBYONBCEvalFiles():
+    trace_file_name = "./trace_files/trace_BYONBC.txt"
+    eval_file_name = "./eval_files/eval_BYONBC.txt"
+    f = open(eval_file_name, "w")
+    print("Doing this trace file: " + trace_file_name)
+    with open(trace_file_name, "r") as file:
+        eu_P = {"correct": 0, "wrong": 0, "actual": 0}
+        ca_P = {"correct": 0, "wrong": 0, "actual": 0}
+        gl_P = {"correct": 0, "wrong": 0, "actual": 0}
+        es_P = {"correct": 0, "wrong": 0, "actual": 0}
+        en_P = {"correct": 0, "wrong": 0, "actual": 0}
+        pt_P = {"correct": 0, "wrong": 0, "actual": 0}
+        num_correct = 0
+        num_wrong = 0
+        for line in file:
+            trace_array = line.split("  ")
+            tweet_id = trace_array[0]
+            most_likely_class = trace_array[1]
+            score = trace_array[2]
+            actual_class = trace_array[3]
+            result = trace_array[4].rstrip()  # correct or wrong
+            if result == "correct":
+                num_correct += 1
+                if most_likely_class == "eu":
+                    eu_P["correct"] += 1
+                elif most_likely_class == "ca":
+                    ca_P["correct"] += 1
+                elif most_likely_class == "gl":
+                    gl_P["correct"] += 1
+                elif most_likely_class == "es":
+                    es_P["correct"] += 1
+                elif most_likely_class == "en":
+                    en_P["correct"] += 1
+                elif most_likely_class == "pt":
+                    pt_P["correct"] += 1
+                else:
+                    pass
+                if actual_class == "eu":
+                    eu_P["actual"] += 1
+                elif actual_class == "ca":
+                    ca_P["actual"] += 1
+                elif actual_class == "gl":
+                    gl_P["actual"] += 1
+                elif actual_class == "es":
+                    es_P["actual"] += 1
+                elif actual_class == "en":
+                    en_P["actual"] += 1
+                elif actual_class == "pt":
+                    pt_P["actual"] += 1
+                else:
+                    pass
+            else:
+                num_wrong += 1
+                if most_likely_class == "eu":
+                    eu_P["wrong"] += 1
+                elif most_likely_class == "ca":
+                    ca_P["wrong"] += 1
+                elif most_likely_class == "gl":
+                    gl_P["wrong"] += 1
+                elif most_likely_class == "es":
+                    es_P["wrong"] += 1
+                elif most_likely_class == "en":
+                    en_P["wrong"] += 1
+                elif most_likely_class == "pt":
+                    pt_P["wrong"] += 1
+                else:
+                    pass
+                if actual_class == "eu":
+                    eu_P["actual"] += 1
+                elif actual_class == "ca":
+                    ca_P["actual"] += 1
+                elif actual_class == "gl":
+                    gl_P["actual"] += 1
+                elif actual_class == "es":
+                    es_P["actual"] += 1
+                elif actual_class == "en":
+                    en_P["actual"] += 1
+                elif actual_class == "pt":
+                    pt_P["actual"] += 1
+                else:
+                    pass
 
+    accuracy = round((num_correct / (num_correct + num_wrong)), 4)
+
+    eu_precision = round((eu_P["correct"] / (eu_P["correct"] + eu_P["wrong"])), 4)
+    ca_precision = round((ca_P["correct"] / (ca_P["correct"] + ca_P["wrong"])), 4)
+    if gl_P["correct"] == 0 and gl_P["wrong"] == 0:
+        gl_precision = .000
+    else:
+        gl_precision = round((gl_P["correct"] / (gl_P["correct"] + gl_P["wrong"])), 4)
+    es_precision = round((es_P["correct"] / (es_P["correct"] + es_P["wrong"])), 4)
+    en_precision = round((en_P["correct"] / (en_P["correct"] + en_P["wrong"])), 4)
+    pt_precision = round((pt_P["correct"] / (pt_P["correct"] + pt_P["wrong"])), 4)
+
+    eu_recall = round((eu_P["correct"] / (eu_P["actual"])), 4)
+    ca_recall = round((ca_P["correct"] / (ca_P["actual"])), 4)
+    gl_recall = round((gl_P["correct"] / (gl_P["actual"])), 4)
+    es_recall = round((es_P["correct"] / (es_P["actual"])), 4)
+    en_recall = round((en_P["correct"] / (en_P["actual"])), 4)
+    pt_recall = round((pt_P["correct"] / (pt_P["actual"])), 4)
+
+    f.write(str(accuracy) + "\n")
+    f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(
+        es_precision) + "  " + str(en_precision) + "  " + str(pt_precision) + "\n")
+    f.write(str(eu_recall) + "  " + str(ca_recall) + "  " + str(gl_recall) + "  " + str(
+        es_recall) + "  " + str(en_recall) + "  " + str(pt_recall) + "\n")
+    f.close()
 def generateAllEvalFiles():
     for v in range(3):
         for n in range(1, 4):
@@ -178,12 +290,12 @@ def generateAllEvalFiles():
                 en_precision = round((en_P["correct"] / (en_P["correct"] + en_P["wrong"])), 4)
                 pt_precision = round((pt_P["correct"] / (pt_P["correct"] + pt_P["wrong"])), 4)
 
-                eu_recall = round((eu_P["correct"] / (eu_P["correct"] + eu_P["actual"])), 4)
-                ca_recall = round((ca_P["correct"] / (ca_P["correct"] + ca_P["actual"])), 4)
-                gl_recall = round((gl_P["correct"] / (gl_P["correct"] + gl_P["actual"])), 4)
-                es_recall = round((es_P["correct"] / (es_P["correct"] + es_P["actual"])), 4)
-                en_recall = round((en_P["correct"] / (en_P["correct"] + en_P["actual"])), 4)
-                pt_recall = round((pt_P["correct"] / (pt_P["correct"] + pt_P["actual"])), 4)
+                eu_recall = round((eu_P["correct"] / (eu_P["actual"])), 4)
+                ca_recall = round((ca_P["correct"] / (ca_P["actual"])), 4)
+                gl_recall = round((gl_P["correct"] / (gl_P["actual"])), 4)
+                es_recall = round((es_P["correct"] / (es_P["actual"])), 4)
+                en_recall = round((en_P["correct"] / (en_P["actual"])), 4)
+                pt_recall = round((pt_P["correct"] / (pt_P["actual"])), 4)
 
                 f.write(str(accuracy) + "\n")
                 f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(

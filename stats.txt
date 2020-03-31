@@ -4,11 +4,11 @@ Model with best accuracy: 0.9027 is V = 0, N = 3 and D = 0.3
 
 
 eu with best precision: 1.0 is V = 1, N = 3 and D = 0.9
-eu with best recall: 0.4693 is V = 0, N = 3 and D = 0.1
+eu with best recall: 0.8842 is V = 0, N = 3 and D = 0.1
 
 
 ca with best precision: 0.625 is V = 1, N = 3 and D = 0.8
-ca with best recall: 0.4604 is V = 2, N = 3 and D = 0.1
+ca with best recall: 0.8533 is V = 2, N = 3 and D = 0.1
 
 
 gl with best precision: 0 is V = 0, N = 0 and D = 0.0
@@ -16,12 +16,12 @@ gl with best recall: 0 is V = 0, N = 0 and D = 0.0
 
 
 es with best precision: 0.9221 is V = 1, N = 1 and D = 0.1
-es with best recall: 0.4992 is V = 1, N = 3 and D = 0.9
+es with best recall: 0.997 is V = 1, N = 3 and D = 0.9
 
 
 en with best precision: 0.9748 is V = 1, N = 3 and D = 0.9
-en with best recall: 0.4586 is V = 1, N = 2 and D = 0.6
+en with best recall: 0.8469 is V = 1, N = 2 and D = 0.6
 
 
 pt with best precision: 0.9943 is V = 1, N = 3 and D = 0.9
-pt with best recall: 0.452 is V = 0, N = 3 and D = 0.2
+pt with best recall: 0.8248 is V = 0, N = 3 and D = 0.2

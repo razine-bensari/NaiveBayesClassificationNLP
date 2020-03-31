@@ -8,5 +8,10 @@ import NaiveBayesClassifierUtils
 
 #NaiveBayesClassifierUtils.cleanTrainingData()
 #NaiveBayesClassifierUtils.trainAllNBLanguageClassifier()
-#NaiveBayesClassifierUtils.generateAllEvalFiles()
-NaiveBayesClassifierUtils.generateStatsFile()
+# NaiveBayesClassifierUtils.generateAllEvalFiles()
+# NaiveBayesClassifierUtils.generateStatsFile()
+
+NaiveBayesClassifierUtils.trainBYONBC()
+NaiveBayesClassifierUtils.generateBYONBCEvalFiles()
+
+

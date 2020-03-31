@@ -49,3 +49,50 @@ out of all the wrong/correct, which ones  came from which language
 
 
 in the testing phase, there is only in true case of gl. in some trace file, we have many guesses that gl is the right answer and end up wrong (look at that)
+
+
+
+
+
+
+
+per-class precision:
+
+# correct guesses for languages L (CA) /  # total guesses (correct or wrong) by language L (CA)
+
+74 correct/
+100 decision
+
+
+per-class-recall:
+
+# correct guesses for languages L (CA) / # total actual cases of language L (CA)   380
+
+39 correct/
+100 CA cases
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
