@@ -37,3 +37,6 @@ Generate classifiers with many different data  for delta 0, 0.1,0.2,0.3 ... unti
 Also, see if instead of using vocab 0,1,2 For each languages, have its own vocab with all letters and punctuation marks
 
 Many words in the tweet are links and unsername which contains to vocabulary significance and can recude presicision when training. Those samples are not good representation of the languages
+
+
+Talk about how accurany changes when u change only the vocabulary, when u change only delta, when u change only ngramm.

@@ -29,10 +29,6 @@ def getFrequenciesForV2(BOW, tweet):
     BOW["<NOT-APPEAR>"] = 0
 
 
-def buildTrigramsWhenVocabularyIsTwo():
-    None
-
-
 # BOW is a Bag of Word dictionary using alphabet as keys and frequencies as values
 def addSmoothing(BOW, delta):
     for c in BOW:
@@ -129,10 +125,9 @@ class NaiveBayesClassifier:
         if self.vocabulary == 1:
             self.buildTrigramsWhenVocabularyIsOne()
         if self.vocabulary == 2:
-            buildTrigramsWhenVocabularyIsTwo()
+            self.buildTrigramsWhenVocabularyIsTwo()
 
     def buildUnigramsWhenVocabularyIsZero(self):
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -140,12 +135,11 @@ class NaiveBayesClassifier:
                 getFrequencies(self.BOW_V0, tweetArray[3])
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print(self.BOW_V0)
+        # print("Tweet count: " + str(tweetCount))
+        # print(self.BOW_V0)
         addSmoothing(self.BOW_V0, self.delta)
 
     def buildUnigramsWhenVocabularyIsOne(self):
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -153,12 +147,11 @@ class NaiveBayesClassifier:
                 getFrequencies(self.BOW_V1, tweetArray[3])
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print(self.BOW_V1)
+        # print("Tweet count: " + str(tweetCount))
+        # print(self.BOW_V1)
         addSmoothing(self.BOW_V1, self.delta)
 
     def buildUnigramsWhenVocabularyIsTwo(self):
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -166,8 +159,8 @@ class NaiveBayesClassifier:
                 getFrequenciesForV2(self.BOW_V2, tweetArray[3])
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print(self.BOW_V2)
+        # print("Tweet count: " + str(tweetCount))
+        # print(self.BOW_V2)
         addSmoothing(self.BOW_V2, self.delta)
 
     def calculateProbability(self, tweet):
@@ -195,7 +188,7 @@ class NaiveBayesClassifier:
             elif self.vocabulary == 1:
                 return self.calculate_probability_n3_v1(tweet)
             elif self.vocabulary == 2:
-                pass
+                return self.calculate_probability_n3_v2(tweet)
             else:
                 print("Invalid V")
         else:
@@ -204,30 +197,30 @@ class NaiveBayesClassifier:
     def calculate_probability_n1_v0(self, tweet):
         sum_of_prob = 0
         total_chars = sum(self.BOW_V0.values())
-        print("total char in bow: " + str(total_chars))
+        #print("total char in bow: " + str(total_chars))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prob_of_tweet_base10 = math.log(tweet_ratio, 10)
         for c in tweet:
             if c in self.BOW_V0:
                 char_ratio = self.BOW_V0.get(c) / total_chars
                 sum_of_prob += math.log(char_ratio, 10)
-                print("char probablity: " + str(char_ratio))
+                #print("char probablity: " + str(char_ratio))
         self.probability = prob_of_tweet_base10 + sum_of_prob
         return self.probability
 
     def calculate_probability_n1_v1(self, tweet):
         sum_of_prob = 0
         total_chars = sum(self.BOW_V1.values())
-        print("total char in bow: " + str(total_chars))
+        #print("total char in bow: " + str(total_chars))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         for c in tweet:
             if c in self.BOW_V1:
                 char_ratio = self.BOW_V1.get(c) / total_chars
                 sum_of_prob += math.log(char_ratio, 10)
-                print("char probablity: " + str(char_ratio))
+                #print("char probablity: " + str(char_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         self.probability = sum_of_prob
         return self.probability
@@ -235,24 +228,23 @@ class NaiveBayesClassifier:
     def calculate_probability_n1_v2(self, tweet):
         sum_of_prob = 0
         total_chars = sum(self.BOW_V2.values())
-        print("total char in bow: " + str(total_chars))
+        # print("total char in bow: " + str(total_chars))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         for c in tweet:
             if c in self.BOW_V2:
                 char_ratio = self.BOW_V2.get(c) / total_chars
                 sum_of_prob += math.log(char_ratio, 10)
-                print("char probablity: " + str(char_ratio))
-            if c not in self.BOW_V2 and c.isalpha():
-                print("This character was not in training: " + str(c))
+                #print("char probablity: " + str(char_ratio))
+            #if c not in self.BOW_V2 and c.isalpha():
+                #print("This character was not in training: " + str(c))
                 # TODO get more info on what to do here
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
 
     def buildBigramsWhenVocabularyIsZero(self):
         self.array = np.zeros([27, 27])  # extra row and column for <NOT-APPEAR>
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -262,14 +254,13 @@ class NaiveBayesClassifier:
                     self.populateBigram_V0(bigrams_couple, self.array)
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print("This is the vocabulary: ")
-        print(self.BOW_V0)
+        #print("Tweet count: " + str(tweetCount))
+        #print("This is the vocabulary: ")
+        #print(self.BOW_V0)
         addSmoothingBigrams(self.array, self.delta)
 
     def buildBigramsWhenVocabularyIsOne(self):
         self.array = np.zeros([53, 53])  # extra row and column for <NOT-APPEAR>
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -279,16 +270,15 @@ class NaiveBayesClassifier:
                     self.populateBigram_V1(bigrams_couple, self.array)
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print("This is the vocabulary: ")
-        print(self.BOW_V1)
+        #print("Tweet count: " + str(tweetCount))
+        #print("This is the vocabulary: ")
+        #print(self.BOW_V1)
         addSmoothingBigrams(self.array, self.delta)
 
     def buildBigramsWhenVocabularyIsTwo(self):
         self.map_char_to_index = self.get_map_vocabular(self.trainingFile)
         self.array = np.zeros(
             [len(self.map_char_to_index), len(self.map_char_to_index)])  # Not appear column is already there
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -298,9 +288,9 @@ class NaiveBayesClassifier:
                     self.populateBigram_V2(bigrams_couple, self.array, self.map_char_to_index)
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print("This is the vocabulary: ")
-        print(self.map_char_to_index)
+        #print("Tweet count: " + str(tweetCount))
+        #print("This is the vocabulary: ")
+        #print(self.map_char_to_index)
         addSmoothingBigrams(self.array, self.delta)
 
     def get_map_vocabular(self, trainingFile):
@@ -340,9 +330,9 @@ class NaiveBayesClassifier:
                 x = string.ascii_uppercase.index(bigram[0])
                 y = string.ascii_uppercase.index(bigram[1])
                 array[x + 26, y + 26] += 1
-            else:
-                print("Not able to populate bigram")
-                print(bigram)
+            #else:
+                # print("Not able to populate bigram")
+                #print(bigram)
 
     def populateBigram_V2(self, bigrams_couple, array, map_char_to_index):
         for bigram in bigrams_couple:
@@ -353,9 +343,9 @@ class NaiveBayesClassifier:
     def calculate_probability_n2_v0(self, tweet):
         sum_of_prob = 0
         total_chars_row = self.array.sum(axis=1)
-        print("total char in each row: " + str(total_chars_row))
+        #print("total char in each row: " + str(total_chars_row))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         bigrams_couple = getBigrams(self.BOW_V0, tweet)
         for bigram in bigrams_couple:
@@ -363,16 +353,16 @@ class NaiveBayesClassifier:
             y = string.ascii_lowercase.index(bigram[1])
             bigram_ratio = self.array[x, y] / total_chars_row[x]
             sum_of_prob += math.log(bigram_ratio, 10)
-            print("bigram probablity: " + str(bigram_ratio))
+            #print("bigram probablity: " + str(bigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
 
     def calculate_probability_n2_v1(self, tweet):
         sum_of_prob = 0
         total_chars_row = self.array.sum(axis=1)
-        print("total char in each row: " + str(total_chars_row))
+        #print("total char in each row: " + str(total_chars_row))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         bigrams_couple = getBigrams(self.BOW_V1, tweet)
         for bigram in bigrams_couple:
@@ -381,28 +371,28 @@ class NaiveBayesClassifier:
                 y = string.ascii_lowercase.index(bigram[1])
                 bigram_ratio = self.array[x, y] / total_chars_row[x]
                 sum_of_prob += math.log(bigram_ratio, 10)
-                print("bigram probablity: " + str(bigram_ratio))
+                #print("bigram probablity: " + str(bigram_ratio))
             elif bigram[0].islower() and bigram[1].isupper():
                 x = string.ascii_lowercase.index(bigram[0])
                 y = string.ascii_uppercase.index(bigram[1])
                 bigram_ratio = self.array[x, y + 26] / total_chars_row[x]
                 sum_of_prob += math.log(bigram_ratio, 10)
-                print("bigram probablity: " + str(bigram_ratio))
+                #print("bigram probablity: " + str(bigram_ratio))
             elif bigram[0].isupper() and bigram[1].islower():
                 x = string.ascii_uppercase.index(bigram[0])
                 y = string.ascii_lowercase.index(bigram[1])
                 bigram_ratio = self.array[x + 26, y] / total_chars_row[x + 26]
                 sum_of_prob += math.log(bigram_ratio, 10)
-                print("bigram probablity: " + str(bigram_ratio))
+                #print("bigram probablity: " + str(bigram_ratio))
             elif bigram[0].isupper() and bigram[1].isupper():
                 x = string.ascii_uppercase.index(bigram[0])
                 y = string.ascii_uppercase.index(bigram[1])
                 bigram_ratio = self.array[x + 26, y + 26] / total_chars_row[x + 26]
                 sum_of_prob += math.log(bigram_ratio, 10)
-                print("bigram probablity: " + str(bigram_ratio))
+                #print("bigram probablity: " + str(bigram_ratio))
             else:
-                print("Not able to calculate probability")
-                print(bigram)
+                #print("Not able to calculate probability")
+                #print(bigram)
                 return 0.0
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
@@ -410,23 +400,22 @@ class NaiveBayesClassifier:
     def calculate_probability_n2_v2(self, tweet):
         sum_of_prob = 0
         total_chars_row = self.array.sum(axis=1)
-        print("total char in each row: " + str(total_chars_row))
+        #print("total char in each row: " + str(total_chars_row))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
-        bigrams_couple = getBigrams(self.BOW_V0, tweet)
+        bigrams_couple = getBigrams(self.map_char_to_index, tweet)
         for bigram in bigrams_couple:
             x = self.map_char_to_index[bigram[0]]
             y = self.map_char_to_index[bigram[1]]
             bigram_ratio = self.array[x, y] / total_chars_row[x]
             sum_of_prob += math.log(bigram_ratio, 10)
-            print("bigram probablity: " + str(bigram_ratio))
+            #print("bigram probablity: " + str(bigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
 
     def buildTrigramsWhenVocabularyIsZero(self):
         self.array = np.zeros([27, 27, 27])
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -436,14 +425,13 @@ class NaiveBayesClassifier:
                     self.populateTrigram_V0(trigram_couple, self.array)
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print("This is the vocabulary: ")
-        print(self.BOW_V0)
+        #print("Tweet count: " + str(tweetCount))
+        #print("This is the vocabulary: ")
+        #print(self.BOW_V0)
         addSmoothingTrigrams(self.array, self.delta)
 
     def buildTrigramsWhenVocabularyIsOne(self):
         self.array = np.zeros([53, 53, 53])
-        self.language = getLanguage(self.trainingFile.split("_"))
         tweetCount = 0
         with open(self.trainingFile, "r") as file:
             for line in file:
@@ -453,9 +441,29 @@ class NaiveBayesClassifier:
                     self.populateTrigram_V1(trigram_couple, self.array)
                 tweetCount += 1
         self.tweetCount = tweetCount
-        print("Tweet count: " + str(tweetCount))
-        print("This is the vocabulary: ")
-        print(self.BOW_V1)
+        #print("Tweet count: " + str(tweetCount))
+        #print("This is the vocabulary: ")
+        #print(self.BOW_V1)
+        addSmoothingTrigrams(self.array, self.delta)
+
+    def buildTrigramsWhenVocabularyIsTwo(self):
+        self.map_char_to_index = self.get_map_vocabular(self.trainingFile)
+        x = len(self.map_char_to_index)
+        y = len(self.map_char_to_index)
+        z = len(self.map_char_to_index)
+        self.array = np.zeros([x, y, z])  # <NOT-APPEAR> column is already there
+        tweetCount = 0
+        with open(self.trainingFile, "r") as file:
+            for line in file:
+                tweetArray = line.split("\t")
+                trigram_couple = getTrigrams(self.map_char_to_index, tweetArray[3])
+                if len(trigram_couple):
+                    self.populateTrigram_V2(trigram_couple, self.array, self.map_char_to_index)
+                tweetCount += 1
+        self.tweetCount = tweetCount
+        #print("Tweet count: " + str(tweetCount))
+        #print("This is the vocabulary: ")
+        #print(self.map_char_to_index)
         addSmoothingTrigrams(self.array, self.delta)
 
     def populateTrigram_V0(self, trigram_couple, array):
@@ -507,27 +515,34 @@ class NaiveBayesClassifier:
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 array[x + 26, y + 26, z + 26] += 1
-            else:
-                print("Not able to populate trigram")
-                print(trigram)
+            #else:
+                #print("Not able to populate trigram")
+                #print(trigram)
+
+    def populateTrigram_V2(self, trigram_couple, array, map_char_to_index):
+        for trigram in trigram_couple:
+            x = int(map_char_to_index[trigram[0]])
+            y = int(map_char_to_index[trigram[1]])
+            z = int(map_char_to_index[trigram[2]])
+            array[x, y, z] += 1
 
     def calculate_probability_n3_v0(self, tweet):
         sum_of_prob = 0
         total_chars_matrix = self.array.sum(axis=2)
         total_chars_row = total_chars_matrix.sum(axis=1)
-        print("total char in each row: " + str(total_chars_row))
+        #print("total char in each row: " + str(total_chars_row))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         trigrams_couple = getTrigrams(self.BOW_V0, tweet)
         for trigram in trigrams_couple:
             x = string.ascii_lowercase.index(trigram[0])
             y = string.ascii_lowercase.index(trigram[1])
             z = string.ascii_lowercase.index(trigram[2])
-            print(x, y, z)
+            # print(x, y, z)
             trigram_ratio = self.array[x, y, z] / total_chars_row[x]
             sum_of_prob += math.log(trigram_ratio, 10)
-            print("bigram probablity: " + str(trigram_ratio))
+            # print("trigram probablity: " + str(trigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
 
@@ -535,9 +550,9 @@ class NaiveBayesClassifier:
         sum_of_prob = 0
         total_chars_matrix = self.array.sum(axis=2)
         total_chars_row = total_chars_matrix.sum(axis=1)
-        print("total char in each row: " + str(total_chars_row))
+        #print("total char in each row: " + str(total_chars_row))
         tweet_ratio = self.tweetCount / self.totalTweetCount
-        print("Tweet probablity: " + str(tweet_ratio))
+        #print("Tweet probablity: " + str(tweet_ratio))
         prior_of_tweet_base10 = math.log(tweet_ratio, 10)
         trigrams_couple = getTrigrams(self.BOW_V1, tweet)
         for trigram in trigrams_couple:
@@ -547,59 +562,78 @@ class NaiveBayesClassifier:
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x, y, z] / total_chars_row[x]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].islower() and trigram[1].isupper() and trigram[2].islower():
                 x = string.ascii_lowercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x, y + 26, z] / total_chars_row[x]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                # print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].islower() and trigram[2].islower():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_lowercase.index(trigram[1])
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y, z] / total_chars_row[x + 26]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].islower():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y + 26, z] / total_chars_row[x + 26]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].islower() and trigram[1].islower() and trigram[2].isupper():
                 x = string.ascii_lowercase.index(trigram[0])
                 y = string.ascii_lowercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x, y, z + 26] / total_chars_row[x]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                # print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].islower() and trigram[1].isupper() and trigram[2].isupper():
                 x = string.ascii_lowercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x, y + 26, z + 26] / total_chars_row[x]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].islower() and trigram[2].isupper():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_lowercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y, z + 26] / total_chars_row[x + 26]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                # print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].isupper():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y + 26, z + 26] / total_chars_row[x + 26]
                 sum_of_prob += math.log(trigram_ratio, 10)
-                print("bigram probablity: " + str(trigram_ratio))
+                #print("trigram probablity: " + str(trigram_ratio))
             else:
-                print("Not able to calculate probability")
-                print(trigram)
+                #print("Not able to calculate probability")
+                #print(trigram)
                 return 0.0
+        self.probability = prior_of_tweet_base10 + sum_of_prob
+        return self.probability
+
+    def calculate_probability_n3_v2(self, tweet):
+        sum_of_prob = 0
+        total_chars_matrix = self.array.sum(axis=2)
+        total_chars_row = total_chars_matrix.sum(axis=1)
+        #print("total char in each row: " + str(total_chars_row))
+        tweet_ratio = self.tweetCount / self.totalTweetCount
+        #print("Tweet probability: " + str(tweet_ratio))
+        prior_of_tweet_base10 = math.log(tweet_ratio, 10)
+        trigram_couple = getTrigrams(self.map_char_to_index, tweet)
+        for trigram in trigram_couple:
+            x = self.map_char_to_index[trigram[0]]
+            y = self.map_char_to_index[trigram[1]]
+            z = self.map_char_to_index[trigram[2]]
+            trigram_ratio = self.array[x, y, z] / total_chars_row[x]
+            sum_of_prob += math.log(trigram_ratio, 10)
+            #print("trigram probability: " + str(trigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability

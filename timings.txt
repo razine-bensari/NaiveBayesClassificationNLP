@@ -1,0 +1,97 @@
+/usr/local/bin/python3.7 /Users/razine/workspace/NaiveBayesClassificationNLP/Main.py
+			In V = 0, N = 1, D = 0.1. Time (s) to iterate over D is 1.4
+			In V = 0, N = 1, D = 0.2. Time (s) to iterate over D is 1.4
+			In V = 0, N = 1, D = 0.3. Time (s) to iterate over D is 1.3
+			In V = 0, N = 1, D = 0.4. Time (s) to iterate over D is 1.3
+			In V = 0, N = 1, D = 0.5. Time (s) to iterate over D is 1.4
+			In V = 0, N = 1, D = 0.6. Time (s) to iterate over D is 1.4
+			In V = 0, N = 1, D = 0.7. Time (s) to iterate over D is 1.3
+			In V = 0, N = 1, D = 0.8. Time (s) to iterate over D is 1.4
+			In V = 0, N = 1, D = 0.9. Time (s) to iterate over D is 1.3
+		Time (s) to iterate over N = 1, 12.2
+			In V = 0, N = 2, D = 0.1. Time (s) to iterate over D is 4.8
+			In V = 0, N = 2, D = 0.2. Time (s) to iterate over D is 4.8
+			In V = 0, N = 2, D = 0.3. Time (s) to iterate over D is 4.8
+			In V = 0, N = 2, D = 0.4. Time (s) to iterate over D is 4.8
+			In V = 0, N = 2, D = 0.5. Time (s) to iterate over D is 4.8
+			In V = 0, N = 2, D = 0.6. Time (s) to iterate over D is 4.7
+			In V = 0, N = 2, D = 0.7. Time (s) to iterate over D is 4.8
+			In V = 0, N = 2, D = 0.8. Time (s) to iterate over D is 4.8
+			In V = 0, N = 2, D = 0.9. Time (s) to iterate over D is 4.8
+		Time (s) to iterate over N = 2, 42.9
+			In V = 0, N = 3, D = 0.1. Time (s) to iterate over D is 5.8
+			In V = 0, N = 3, D = 0.2. Time (s) to iterate over D is 5.7
+			In V = 0, N = 3, D = 0.3. Time (s) to iterate over D is 5.8
+			In V = 0, N = 3, D = 0.4. Time (s) to iterate over D is 5.8
+			In V = 0, N = 3, D = 0.5. Time (s) to iterate over D is 5.8
+			In V = 0, N = 3, D = 0.6. Time (s) to iterate over D is 5.8
+			In V = 0, N = 3, D = 0.7. Time (s) to iterate over D is 5.8
+			In V = 0, N = 3, D = 0.8. Time (s) to iterate over D is 5.7
+			In V = 0, N = 3, D = 0.9. Time (s) to iterate over D is 5.8
+		Time (s) to iterate over N = 3, 51.8
+	Time (s) to iterate over V = 0, 106.9
+			In V = 1, N = 1, D = 0.1. Time (s) to iterate over D is 1.5
+			In V = 1, N = 1, D = 0.2. Time (s) to iterate over D is 1.5
+			In V = 1, N = 1, D = 0.3. Time (s) to iterate over D is 1.5
+			In V = 1, N = 1, D = 0.4. Time (s) to iterate over D is 1.5
+			In V = 1, N = 1, D = 0.5. Time (s) to iterate over D is 1.5
+			In V = 1, N = 1, D = 0.6. Time (s) to iterate over D is 1.5
+			In V = 1, N = 1, D = 0.7. Time (s) to iterate over D is 1.4
+			In V = 1, N = 1, D = 0.8. Time (s) to iterate over D is 1.5
+			In V = 1, N = 1, D = 0.9. Time (s) to iterate over D is 1.5
+		Time (s) to iterate over N = 1, 13.2
+			In V = 1, N = 2, D = 0.1. Time (s) to iterate over D is 5.9
+			In V = 1, N = 2, D = 0.2. Time (s) to iterate over D is 5.9
+			In V = 1, N = 2, D = 0.3. Time (s) to iterate over D is 5.9
+			In V = 1, N = 2, D = 0.4. Time (s) to iterate over D is 5.9
+			In V = 1, N = 2, D = 0.5. Time (s) to iterate over D is 5.9
+			In V = 1, N = 2, D = 0.6. Time (s) to iterate over D is 5.9
+			In V = 1, N = 2, D = 0.7. Time (s) to iterate over D is 6.0
+			In V = 1, N = 2, D = 0.8. Time (s) to iterate over D is 6.4
+			In V = 1, N = 2, D = 0.9. Time (s) to iterate over D is 6.2
+		Time (s) to iterate over N = 2, 54.0
+			In V = 1, N = 3, D = 0.1. Time (s) to iterate over D is 12.9
+			In V = 1, N = 3, D = 0.2. Time (s) to iterate over D is 12.9
+			In V = 1, N = 3, D = 0.3. Time (s) to iterate over D is 12.5
+			In V = 1, N = 3, D = 0.4. Time (s) to iterate over D is 12.0
+			In V = 1, N = 3, D = 0.5. Time (s) to iterate over D is 13.1
+			In V = 1, N = 3, D = 0.6. Time (s) to iterate over D is 11.9
+			In V = 1, N = 3, D = 0.7. Time (s) to iterate over D is 11.6
+			In V = 1, N = 3, D = 0.8. Time (s) to iterate over D is 11.7
+			In V = 1, N = 3, D = 0.9. Time (s) to iterate over D is 11.6
+		Time (s) to iterate over N = 3, 110.2
+	Time (s) to iterate over V = 1, 177.3
+			In V = 2, N = 1, D = 0.1. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.2. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.3. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.4. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.5. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.6. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.7. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.8. Time (s) to iterate over D is 1.6
+			In V = 2, N = 1, D = 0.9. Time (s) to iterate over D is 1.6
+		Time (s) to iterate over N = 1, 14.2
+			In V = 2, N = 2, D = 0.1. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.2. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.3. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.4. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.5. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.6. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.7. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.8. Time (s) to iterate over D is 4.9
+			In V = 2, N = 2, D = 0.9. Time (s) to iterate over D is 4.9
+		Time (s) to iterate over N = 2, 43.8
+			In V = 2, N = 3, D = 0.1. Time (s) to iterate over D is 22.3
+			In V = 2, N = 3, D = 0.2. Time (s) to iterate over D is 22.3
+			In V = 2, N = 3, D = 0.3. Time (s) to iterate over D is 22.3
+			In V = 2, N = 3, D = 0.4. Time (s) to iterate over D is 22.4
+			In V = 2, N = 3, D = 0.5. Time (s) to iterate over D is 22.3
+			In V = 2, N = 3, D = 0.6. Time (s) to iterate over D is 22.3
+			In V = 2, N = 3, D = 0.7. Time (s) to iterate over D is 22.3
+			In V = 2, N = 3, D = 0.8. Time (s) to iterate over D is 22.3
+			In V = 2, N = 3, D = 0.9. Time (s) to iterate over D is 22.3
+		Time (s) to iterate over N = 3, 200.7
+	Time (s) to iterate over V = 2, 258.7
+Time for the whole process: 542.9
+
+Process finished with exit code 0
