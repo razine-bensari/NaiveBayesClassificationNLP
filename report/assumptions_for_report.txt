@@ -40,3 +40,12 @@ Many words in the tweet are links and unsername which contains to vocabulary sig
 
 
 Talk about how accurany changes when u change only the vocabulary, when u change only delta, when u change only ngramm.
+
+Say which languages were mostly failed correct as a graph or table
+es :75% right 25% wrong
+pt 40% right 60%
+. . .
+out of all the wrong/correct, which ones  came from which language
+
+
+in the testing phase, there is only in true case of gl. in some trace file, we have many guesses that gl is the right answer and end up wrong (look at that)
