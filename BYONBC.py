@@ -8,17 +8,17 @@ from decimal import Decimal
 
 class BYONBC:
     def __init__(self):
-        self.model_ca = NaiveBayesClassifier(1, 3, 0.9, "./training_files/ca_training-tweets.txt", "ca",
+        self.model_ca = NaiveBayesClassifier(0, 3, 0.3, "./training_files/ca_training-tweets.txt", "ca",
                                              18318)
-        self.model_gl = NaiveBayesClassifier(1, 3, 0.9, "./training_files/gl_training-tweets.txt", "gl",
+        self.model_gl = NaiveBayesClassifier(0, 3, 0.3, "./training_files/gl_training-tweets.txt", "gl",
                                              18318)
-        self.model_en = NaiveBayesClassifier(1, 3, 0.9, "./training_files/en_training-tweets.txt", "en",
+        self.model_en = NaiveBayesClassifier(0, 3, 0.3, "./training_files/en_training-tweets.txt", "en",
                                              18318)
-        self.model_es = NaiveBayesClassifier(1, 3, 0.9, "./training_files/es_training-tweets.txt", "es",
+        self.model_es = NaiveBayesClassifier(0, 3, 0.3, "./training_files/es_training-tweets.txt", "es",
                                              18318)
-        self.model_pt = NaiveBayesClassifier(1, 3, 0.9, "./training_files/pt_training-tweets.txt", "pt",
+        self.model_pt = NaiveBayesClassifier(0, 3, 0.3, "./training_files/pt_training-tweets.txt", "pt",
                                              18318)
-        self.model_eu = NaiveBayesClassifier(1, 3, 0.9, "./training_files/eu_training-tweets.txt", "eu",
+        self.model_eu = NaiveBayesClassifier(0, 3, 0.3, "./training_files/eu_training-tweets.txt", "eu",
                                              18318)
         self.arrayModel = [self.model_ca, self.model_gl, self.model_en, self.model_es, self.model_pt, self.model_eu]
         self.probability = 0

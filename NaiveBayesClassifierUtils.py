@@ -10,6 +10,7 @@ from NBLanguageClassifier import NBLanguageClassifier
 from BYONBC import BYONBC
 import time
 
+
 class Language(Enum):
     EU = "eu"
     CA = "ca"
@@ -57,10 +58,12 @@ def cleanTrainingData():
         fEN.close()
         fPT.close()
 
+
 def trainBYONBC():
     TweetClassifier = BYONBC()
     TweetClassifier.trainClassifier()
     TweetClassifier.testClassifier()
+
 
 def trainAllNBLanguageClassifier():
     startP = time.time()
@@ -68,7 +71,7 @@ def trainAllNBLanguageClassifier():
         startV = time.time()
         for n in range(1, 4):
             startN = time.time()
-            for d in range(1, 10):
+            for d in range(0, 11):
                 startD = time.time()
                 delta = d * 0.1
                 TweetClassifier = NBLanguageClassifier(v, n, round(delta, 1))
@@ -84,6 +87,156 @@ def trainAllNBLanguageClassifier():
         print("\tTime (s) to iterate over V = " + str(v) + ", " + str(round(stopV - startV, 1)))
     stopP = time.time()
     print("Time for the whole process: " + str(round(stopP - startP, 1)))
+
+
+def generateEvalFileDemo(v, n, d):
+    trace_file_name = "./trace_files/trace_" + str(v) + "_" + str(n) + "_" + str(round(d, 1)) + ".txt"
+    eval_file_name = "./eval_files/eval_" + str(v) + "_" + str(n) + "_" + str(round(d, 1)) + ".txt"
+    f = open(eval_file_name, "w")
+    print("Doing this trace file: " + trace_file_name)
+    with open(trace_file_name, "r") as file:
+        eu_P = {"correct": 0, "wrong": 0, "actual": 0}
+        ca_P = {"correct": 0, "wrong": 0, "actual": 0}
+        gl_P = {"correct": 0, "wrong": 0, "actual": 0}
+        es_P = {"correct": 0, "wrong": 0, "actual": 0}
+        en_P = {"correct": 0, "wrong": 0, "actual": 0}
+        pt_P = {"correct": 0, "wrong": 0, "actual": 0}
+        num_correct = 0
+        num_wrong = 0
+        for line in file:
+            trace_array = line.split("  ")
+            tweet_id = trace_array[0]
+            most_likely_class = trace_array[1]
+            score = trace_array[2]
+            actual_class = trace_array[3]
+            result = trace_array[4].rstrip()  # correct or wrong
+            if result == "correct":
+                num_correct += 1
+                if most_likely_class == "eu":
+                    eu_P["correct"] += 1
+                elif most_likely_class == "ca":
+                    ca_P["correct"] += 1
+                elif most_likely_class == "gl":
+                    gl_P["correct"] += 1
+                elif most_likely_class == "es":
+                    es_P["correct"] += 1
+                elif most_likely_class == "en":
+                    en_P["correct"] += 1
+                elif most_likely_class == "pt":
+                    pt_P["correct"] += 1
+                else:
+                    pass
+                if actual_class == "eu":
+                    eu_P["actual"] += 1
+                elif actual_class == "ca":
+                    ca_P["actual"] += 1
+                elif actual_class == "gl":
+                    gl_P["actual"] += 1
+                elif actual_class == "es":
+                    es_P["actual"] += 1
+                elif actual_class == "en":
+                    en_P["actual"] += 1
+                elif actual_class == "pt":
+                    pt_P["actual"] += 1
+                else:
+                    pass
+            else:
+                num_wrong += 1
+                if most_likely_class == "eu":
+                    eu_P["wrong"] += 1
+                elif most_likely_class == "ca":
+                    ca_P["wrong"] += 1
+                elif most_likely_class == "gl":
+                    gl_P["wrong"] += 1
+                elif most_likely_class == "es":
+                    es_P["wrong"] += 1
+                elif most_likely_class == "en":
+                    en_P["wrong"] += 1
+                elif most_likely_class == "pt":
+                    pt_P["wrong"] += 1
+                else:
+                    pass
+                if actual_class == "eu":
+                    eu_P["actual"] += 1
+                elif actual_class == "ca":
+                    ca_P["actual"] += 1
+                elif actual_class == "gl":
+                    gl_P["actual"] += 1
+                elif actual_class == "es":
+                    es_P["actual"] += 1
+                elif actual_class == "en":
+                    en_P["actual"] += 1
+                elif actual_class == "pt":
+                    pt_P["actual"] += 1
+                else:
+                    pass
+
+    accuracy = round((num_correct / (num_correct + num_wrong)), 4)
+
+    eu_precision = round((eu_P["correct"] / (eu_P["correct"] + eu_P["wrong"])), 4)
+    ca_precision = round((ca_P["correct"] / (ca_P["correct"] + ca_P["wrong"])), 4)
+    if gl_P["correct"] == 0 and gl_P["wrong"] == 0:
+        gl_precision = .000
+    else:
+        gl_precision = round((gl_P["correct"] / (gl_P["correct"] + gl_P["wrong"])), 4)
+    es_precision = round((es_P["correct"] / (es_P["correct"] + es_P["wrong"])), 4)
+    en_precision = round((en_P["correct"] / (en_P["correct"] + en_P["wrong"])), 4)
+    pt_precision = round((pt_P["correct"] / (pt_P["correct"] + pt_P["wrong"])), 4)
+
+    eu_recall = round((eu_P["correct"] / (eu_P["actual"])), 4)
+    ca_recall = round((ca_P["correct"] / (ca_P["actual"])), 4)
+    gl_recall = round((gl_P["correct"] / (gl_P["actual"])), 4)
+    es_recall = round((es_P["correct"] / (es_P["actual"])), 4)
+    en_recall = round((en_P["correct"] / (en_P["actual"])), 4)
+    pt_recall = round((pt_P["correct"] / (pt_P["actual"])), 4)
+
+    f.write(str(accuracy) + "\n")
+    f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(
+        es_precision) + "  " + str(en_precision) + "  " + str(pt_precision) + "\n")
+    f.write(str(eu_recall) + "  " + str(ca_recall) + "  " + str(gl_recall) + "  " + str(
+        es_recall) + "  " + str(en_recall) + "  " + str(pt_recall) + "\n")
+    f.close()
+
+
+def runDemoTest(BYONBC):
+    """
+    :param BYONBC:
+    :return:
+
+    To run for demo, change path in *.testClassifier() to the new input test file
+    also, change path in *.testClassifier() to the new input test file trainBYONBC --> testClassifier()
+    """
+
+    TweetClassifier1 = NBLanguageClassifier(0, 1, round(0, 1))
+    TweetClassifier1.trainClassifier()
+    TweetClassifier1.testClassifier()
+    generateEvalFileDemo(0, 1, round(0, 1))
+
+    TweetClassifier2 = NBLanguageClassifier(1, 2, round(0.5, 1))
+    TweetClassifier2.trainClassifier()
+    TweetClassifier2.testClassifier()
+    generateEvalFileDemo(1, 2, round(0.5, 1))
+
+    TweetClassifier3 = NBLanguageClassifier(1, 3, round(1, 1))
+    TweetClassifier3.trainClassifier()
+    TweetClassifier3.testClassifier()
+    generateEvalFileDemo(1, 3, round(1, 1))
+
+    TweetClassifier4 = NBLanguageClassifier(2, 2, round(0.3, 1))
+    TweetClassifier4.trainClassifier()
+    TweetClassifier4.testClassifier()
+    generateEvalFileDemo(2, 2, round(0.3, 1))
+
+    trainBYONBC()
+    generateBYONBCEvalFiles()
+
+
+# 1. your BYOM
+# 2. the required model with V=0 n=1 d=0
+# 3. the required model with V=1 n=2 d=0.5
+# 4. the required model with V=1 n=3 d=1
+# 5. the required model with V=2 n=2 d=0.3
+
 
 def generateBYONBCEvalFiles():
     trace_file_name = "./trace_files/trace_BYONBC.txt"
@@ -192,10 +345,12 @@ def generateBYONBCEvalFiles():
     f.write(str(eu_recall) + "  " + str(ca_recall) + "  " + str(gl_recall) + "  " + str(
         es_recall) + "  " + str(en_recall) + "  " + str(pt_recall) + "\n")
     f.close()
+
+
 def generateAllEvalFiles():
     for v in range(3):
         for n in range(1, 4):
-            for d in range(1, 10):
+            for d in range(0, 11):
                 delta = d * 0.1
                 trace_file_name = "./trace_files/trace_" + str(v) + "_" + str(n) + "_" + str(round(delta, 1)) + ".txt"
                 eval_file_name = "./eval_files/eval_" + str(v) + "_" + str(n) + "_" + str(round(delta, 1)) + ".txt"
@@ -481,4 +636,5 @@ def generateStatsFile():
         pt_precisionn) + " and D = " + str(pt_precisiond) + "\n")
     f.write("pt with best recall: " + str(pt_recall) + " is V = " + str(pt_recallv) + ", N = " + str(
         pt_recalln) + " and D = " + str(pt_recalld) + "\n")
+    print("Finished generating stats file :)")
     f.close()

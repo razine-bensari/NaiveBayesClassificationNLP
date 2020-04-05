@@ -204,7 +204,10 @@ class NaiveBayesClassifier:
         for c in tweet:
             if c in self.BOW_V0:
                 char_ratio = self.BOW_V0.get(c) / total_chars
-                sum_of_prob += math.log(char_ratio, 10)
+                if char_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(char_ratio, 10)
                 #print("char probablity: " + str(char_ratio))
         self.probability = prob_of_tweet_base10 + sum_of_prob
         return self.probability
@@ -215,13 +218,16 @@ class NaiveBayesClassifier:
         #print("total char in bow: " + str(total_chars))
         tweet_ratio = self.tweetCount / self.totalTweetCount
         #print("Tweet probablity: " + str(tweet_ratio))
-        prior_of_tweet_base10 = math.log(tweet_ratio, 10)
+        prob_of_tweet_base10 = math.log(tweet_ratio, 10)
         for c in tweet:
             if c in self.BOW_V1:
                 char_ratio = self.BOW_V1.get(c) / total_chars
-                sum_of_prob += math.log(char_ratio, 10)
+                if char_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(char_ratio, 10)
                 #print("char probablity: " + str(char_ratio))
-        self.probability = prior_of_tweet_base10 + sum_of_prob
+        self.probability = prob_of_tweet_base10 + sum_of_prob
         self.probability = sum_of_prob
         return self.probability
 
@@ -231,16 +237,15 @@ class NaiveBayesClassifier:
         # print("total char in bow: " + str(total_chars))
         tweet_ratio = self.tweetCount / self.totalTweetCount
         #print("Tweet probablity: " + str(tweet_ratio))
-        prior_of_tweet_base10 = math.log(tweet_ratio, 10)
+        prob_of_tweet_base10 = math.log(tweet_ratio, 10)
         for c in tweet:
             if c in self.BOW_V2:
                 char_ratio = self.BOW_V2.get(c) / total_chars
-                sum_of_prob += math.log(char_ratio, 10)
-                #print("char probablity: " + str(char_ratio))
-            #if c not in self.BOW_V2 and c.isalpha():
-                #print("This character was not in training: " + str(c))
-                # TODO get more info on what to do here
-        self.probability = prior_of_tweet_base10 + sum_of_prob
+                if char_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(char_ratio, 10)
+        self.probability = prob_of_tweet_base10 + sum_of_prob
         return self.probability
 
     def buildBigramsWhenVocabularyIsZero(self):
@@ -352,7 +357,10 @@ class NaiveBayesClassifier:
             x = string.ascii_lowercase.index(bigram[0])
             y = string.ascii_lowercase.index(bigram[1])
             bigram_ratio = self.array[x, y] / total_chars_row[x]
-            sum_of_prob += math.log(bigram_ratio, 10)
+            if bigram_ratio == 0:
+                sum_of_prob = np.log10(0)
+            else:
+                sum_of_prob += math.log(bigram_ratio, 10)
             #print("bigram probablity: " + str(bigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
@@ -370,25 +378,37 @@ class NaiveBayesClassifier:
                 x = string.ascii_lowercase.index(bigram[0])
                 y = string.ascii_lowercase.index(bigram[1])
                 bigram_ratio = self.array[x, y] / total_chars_row[x]
-                sum_of_prob += math.log(bigram_ratio, 10)
+                if bigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(bigram_ratio, 10)
                 #print("bigram probablity: " + str(bigram_ratio))
             elif bigram[0].islower() and bigram[1].isupper():
                 x = string.ascii_lowercase.index(bigram[0])
                 y = string.ascii_uppercase.index(bigram[1])
                 bigram_ratio = self.array[x, y + 26] / total_chars_row[x]
-                sum_of_prob += math.log(bigram_ratio, 10)
+                if bigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(bigram_ratio, 10)
                 #print("bigram probablity: " + str(bigram_ratio))
             elif bigram[0].isupper() and bigram[1].islower():
                 x = string.ascii_uppercase.index(bigram[0])
                 y = string.ascii_lowercase.index(bigram[1])
                 bigram_ratio = self.array[x + 26, y] / total_chars_row[x + 26]
-                sum_of_prob += math.log(bigram_ratio, 10)
+                if bigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(bigram_ratio, 10)
                 #print("bigram probablity: " + str(bigram_ratio))
             elif bigram[0].isupper() and bigram[1].isupper():
                 x = string.ascii_uppercase.index(bigram[0])
                 y = string.ascii_uppercase.index(bigram[1])
                 bigram_ratio = self.array[x + 26, y + 26] / total_chars_row[x + 26]
-                sum_of_prob += math.log(bigram_ratio, 10)
+                if bigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(bigram_ratio, 10)
                 #print("bigram probablity: " + str(bigram_ratio))
             else:
                 #print("Not able to calculate probability")
@@ -408,8 +428,14 @@ class NaiveBayesClassifier:
         for bigram in bigrams_couple:
             x = self.map_char_to_index[bigram[0]]
             y = self.map_char_to_index[bigram[1]]
-            bigram_ratio = self.array[x, y] / total_chars_row[x]
-            sum_of_prob += math.log(bigram_ratio, 10)
+            if total_chars_row[x] == 0:
+                sum_of_prob = np.log10(0)
+            else:
+                bigram_ratio = self.array[x, y] / total_chars_row[x]
+                if bigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(bigram_ratio, 10)
             #print("bigram probablity: " + str(bigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
@@ -541,7 +567,10 @@ class NaiveBayesClassifier:
             z = string.ascii_lowercase.index(trigram[2])
             # print(x, y, z)
             trigram_ratio = self.array[x, y, z] / total_chars_row[x]
-            sum_of_prob += math.log(trigram_ratio, 10)
+            if trigram_ratio == 0:
+                sum_of_prob = np.log10(0)
+            else:
+                sum_of_prob += math.log(trigram_ratio, 10)
             # print("trigram probablity: " + str(trigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
@@ -561,56 +590,80 @@ class NaiveBayesClassifier:
                 y = string.ascii_lowercase.index(trigram[1])
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x, y, z] / total_chars_row[x]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].islower() and trigram[1].isupper() and trigram[2].islower():
                 x = string.ascii_lowercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x, y + 26, z] / total_chars_row[x]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 # print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].islower() and trigram[2].islower():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_lowercase.index(trigram[1])
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y, z] / total_chars_row[x + 26]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].islower():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_lowercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y + 26, z] / total_chars_row[x + 26]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].islower() and trigram[1].islower() and trigram[2].isupper():
                 x = string.ascii_lowercase.index(trigram[0])
                 y = string.ascii_lowercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x, y, z + 26] / total_chars_row[x]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 # print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].islower() and trigram[1].isupper() and trigram[2].isupper():
                 x = string.ascii_lowercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x, y + 26, z + 26] / total_chars_row[x]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 #print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].islower() and trigram[2].isupper():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_lowercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y, z + 26] / total_chars_row[x + 26]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 # print("trigram probablity: " + str(trigram_ratio))
             elif trigram[0].isupper() and trigram[1].isupper() and trigram[2].isupper():
                 x = string.ascii_uppercase.index(trigram[0])
                 y = string.ascii_uppercase.index(trigram[1])
                 z = string.ascii_uppercase.index(trigram[2])
                 trigram_ratio = self.array[x + 26, y + 26, z + 26] / total_chars_row[x + 26]
-                sum_of_prob += math.log(trigram_ratio, 10)
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
                 #print("trigram probablity: " + str(trigram_ratio))
             else:
                 #print("Not able to calculate probability")
@@ -632,8 +685,14 @@ class NaiveBayesClassifier:
             x = self.map_char_to_index[trigram[0]]
             y = self.map_char_to_index[trigram[1]]
             z = self.map_char_to_index[trigram[2]]
-            trigram_ratio = self.array[x, y, z] / total_chars_row[x]
-            sum_of_prob += math.log(trigram_ratio, 10)
+            if total_chars_row[x] == 0:
+                sum_of_prob = np.log10(0)
+            else:
+                trigram_ratio = self.array[x, y, z] / total_chars_row[x]
+                if trigram_ratio == 0:
+                    sum_of_prob = np.log10(0)
+                else:
+                    sum_of_prob += math.log(trigram_ratio, 10)
             #print("trigram probability: " + str(trigram_ratio))
         self.probability = prior_of_tweet_base10 + sum_of_prob
         return self.probability
