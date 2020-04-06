@@ -28,8 +28,10 @@ class NBLanguageClassifier:
         self.totalTweetCount = 18318
 
     def trainClassifier(self):
+        global model
         for model in self.arrayModel:
             model.constructModel()
+
 
     def testClassifier(self):
         trace_file_name = "./trace_files/trace_" + str(self.vocabulary) + "_" + str(self.n) + "_" + str(

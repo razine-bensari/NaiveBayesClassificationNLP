@@ -136,6 +136,7 @@ class NaiveBayesClassifier:
                 tweetCount += 1
         self.tweetCount = tweetCount
         # print("Tweet count: " + str(tweetCount))
+        # print(self.language)
         # print(self.BOW_V0)
         addSmoothing(self.BOW_V0, self.delta)
 
@@ -260,8 +261,8 @@ class NaiveBayesClassifier:
                 tweetCount += 1
         self.tweetCount = tweetCount
         #print("Tweet count: " + str(tweetCount))
-        #print("This is the vocabulary: ")
-        #print(self.BOW_V0)
+        # print("This is the vocabulary: ")
+        # print(self.BOW_V0)
         addSmoothingBigrams(self.array, self.delta)
 
     def buildBigramsWhenVocabularyIsOne(self):

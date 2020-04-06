@@ -73,6 +73,9 @@ per-class-recall:
 
 
 
+spanish is 71% of training data
+
+
 
 
 

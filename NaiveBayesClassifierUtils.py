@@ -65,6 +65,16 @@ def trainBYONBC():
     TweetClassifier.testClassifier()
 
 
+def getTweetCount(filename):
+    tweetCount = {"eu": 0, "ca": 0, "gl": 0, "es": 0, "en": 0, "pt": 0}
+    with open(filename, "r") as file:
+        for line in file:
+            tweetArray = line.split("\t")
+            lang = tweetArray[2]
+            tweetCount[lang] += 1
+    return tweetCount
+
+
 def trainAllNBLanguageClassifier():
     startP = time.time()
     for v in range(3):
@@ -90,8 +100,8 @@ def trainAllNBLanguageClassifier():
 
 
 def generateEvalFileDemo(v, n, d):
-    trace_file_name = "./trace_files/trace_" + str(v) + "_" + str(n) + "_" + str(round(d, 1)) + ".txt"
-    eval_file_name = "./eval_files/eval_" + str(v) + "_" + str(n) + "_" + str(round(d, 1)) + ".txt"
+    trace_file_name = "./trace_files/trace_" + str(v) + "_" + str(n) + "_" + str(d) + ".txt"
+    eval_file_name = "./eval_files/eval_" + str(v) + "_" + str(n) + "_" + str(d) + ".txt"
     f = open(eval_file_name, "w")
     print("Doing this trace file: " + trace_file_name)
     with open(trace_file_name, "r") as file:
@@ -171,6 +181,7 @@ def generateEvalFileDemo(v, n, d):
                 else:
                     pass
 
+    tweetCount = getTweetCount("./OriginalDataSet/test-tweets-given.txt")
     accuracy = round((num_correct / (num_correct + num_wrong)), 4)
 
     eu_precision = round((eu_P["correct"] / (eu_P["correct"] + eu_P["wrong"])), 4)
@@ -190,11 +201,34 @@ def generateEvalFileDemo(v, n, d):
     en_recall = round((en_P["correct"] / (en_P["actual"])), 4)
     pt_recall = round((pt_P["correct"] / (pt_P["actual"])), 4)
 
+    eu_f1 = round((2 * ((eu_precision * eu_recall) / (eu_precision + eu_recall))), 4)
+    ca_f1 = round((2 * ((ca_precision * ca_recall) / (ca_precision + ca_recall))), 4)
+    gl_f1 = round((2 * ((gl_precision * gl_recall) / (gl_precision + gl_recall))), 4)
+    es_f1 = round((2 * ((es_precision * es_recall) / (es_precision + es_recall))), 4)
+    en_f1 = round((2 * ((en_precision * en_recall) / (en_precision + en_recall))), 4)
+    pt_f1 = round((2 * ((pt_precision * pt_recall) / (pt_precision + pt_recall))), 4)
+
+    macro_f1 = round(((eu_f1 + ca_f1 + gl_f1 + es_f1 + en_f1 + pt_f1) / 6), 4)
+
+    print("MACRO_F1\n")
+    print(macro_f1)
+    print("tweet count\n")
+    print(tweetCount)
+
+    weighted_avg = round((((eu_f1 * tweetCount["eu"]) + (ca_f1 * tweetCount["ca"]) + (gl_f1 * tweetCount["gl"]) + (
+                es_f1 * tweetCount["es"]) + (en_f1 * tweetCount["en"]) + (pt_f1 * tweetCount["pt"])) / tweetCount.values()), 4)
+
+    print("weighted avg\n")
+    print(weighted_avg)
+
     f.write(str(accuracy) + "\n")
     f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(
         es_precision) + "  " + str(en_precision) + "  " + str(pt_precision) + "\n")
     f.write(str(eu_recall) + "  " + str(ca_recall) + "  " + str(gl_recall) + "  " + str(
         es_recall) + "  " + str(en_recall) + "  " + str(pt_recall) + "\n")
+    f.write(str(eu_f1) + "  " + str(ca_f1) + "  " + str(gl_f1) + "  " + str(
+        es_f1) + "  " + str(en_f1) + "  " + str(pt_f1) + "\n")
+    f.write(str(macro_f1) + "  " + str(weighted_avg))
     f.close()
 
 
@@ -207,20 +241,20 @@ def runDemoTest(BYONBC):
     also, change path in *.testClassifier() to the new input test file trainBYONBC --> testClassifier()
     """
 
-    TweetClassifier1 = NBLanguageClassifier(0, 1, round(0, 1))
+    TweetClassifier1 = NBLanguageClassifier(0, 1, 0.0)
     TweetClassifier1.trainClassifier()
     TweetClassifier1.testClassifier()
-    generateEvalFileDemo(0, 1, round(0, 1))
+    generateEvalFileDemo(0, 1, 0.0)
 
     TweetClassifier2 = NBLanguageClassifier(1, 2, round(0.5, 1))
     TweetClassifier2.trainClassifier()
     TweetClassifier2.testClassifier()
     generateEvalFileDemo(1, 2, round(0.5, 1))
 
-    TweetClassifier3 = NBLanguageClassifier(1, 3, round(1, 1))
+    TweetClassifier3 = NBLanguageClassifier(1, 3, 1.0)
     TweetClassifier3.trainClassifier()
     TweetClassifier3.testClassifier()
-    generateEvalFileDemo(1, 3, round(1, 1))
+    generateEvalFileDemo(1, 3, 1.0)
 
     TweetClassifier4 = NBLanguageClassifier(2, 2, round(0.3, 1))
     TweetClassifier4.trainClassifier()
@@ -320,6 +354,7 @@ def generateBYONBCEvalFiles():
                 else:
                     pass
 
+    tweetCount = getTweetCount("./OriginalDataSet/test-tweets-given.txt")
     accuracy = round((num_correct / (num_correct + num_wrong)), 4)
 
     eu_precision = round((eu_P["correct"] / (eu_P["correct"] + eu_P["wrong"])), 4)
@@ -339,11 +374,37 @@ def generateBYONBCEvalFiles():
     en_recall = round((en_P["correct"] / (en_P["actual"])), 4)
     pt_recall = round((pt_P["correct"] / (pt_P["actual"])), 4)
 
+    eu_f1 = round((2 * ((eu_precision * eu_recall) / (eu_precision + eu_recall))), 4)
+    ca_f1 = round((2 * ((ca_precision * ca_recall) / (ca_precision + ca_recall))), 4)
+    if (gl_precision + gl_recall) == 0:
+        gl_f1 = 0
+    else:
+        gl_f1 = round((2 * ((gl_precision * gl_recall) / (gl_precision + gl_recall))), 4)
+    es_f1 = round((2 * ((es_precision * es_recall) / (es_precision + es_recall))), 4)
+    en_f1 = round((2 * ((en_precision * en_recall) / (en_precision + en_recall))), 4)
+    pt_f1 = round((2 * ((pt_precision * pt_recall) / (pt_precision + pt_recall))), 4)
+
+    macro_f1 = round(((eu_f1 + ca_f1 + gl_f1 + es_f1 + en_f1 + pt_f1) / 6), 4)
+
+    print("MACRO_F1\n")
+    print(macro_f1)
+    print("tweet count\n")
+    print(tweetCount)
+
+    weighted_avg = round((((eu_f1 * tweetCount["eu"]) + (ca_f1 * tweetCount["ca"]) + (gl_f1 * tweetCount["gl"]) + (
+            es_f1 * tweetCount["es"]) + (en_f1 * tweetCount["en"]) + (pt_f1 * tweetCount["pt"])) / sum(tweetCount.values())), 4)
+
+    print("weighted avg\n")
+    print(weighted_avg)
+
     f.write(str(accuracy) + "\n")
     f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(
         es_precision) + "  " + str(en_precision) + "  " + str(pt_precision) + "\n")
     f.write(str(eu_recall) + "  " + str(ca_recall) + "  " + str(gl_recall) + "  " + str(
         es_recall) + "  " + str(en_recall) + "  " + str(pt_recall) + "\n")
+    f.write(str(eu_f1) + "  " + str(ca_f1) + "  " + str(gl_f1) + "  " + str(
+        es_f1) + "  " + str(en_f1) + "  " + str(pt_f1) + "\n")
+    f.write(str(macro_f1) + "  " + str(weighted_avg))
     f.close()
 
 
@@ -433,6 +494,8 @@ def generateAllEvalFiles():
                             else:
                                 pass
 
+                tweetCount = getTweetCount("./OriginalDataSet/test-tweets-given.txt")
+
                 accuracy = round((num_correct / (num_correct + num_wrong)), 4)
 
                 eu_precision = round((eu_P["correct"] / (eu_P["correct"] + eu_P["wrong"])), 4)
@@ -452,11 +515,39 @@ def generateAllEvalFiles():
                 en_recall = round((en_P["correct"] / (en_P["actual"])), 4)
                 pt_recall = round((pt_P["correct"] / (pt_P["actual"])), 4)
 
+                eu_f1 = round((2 * ((eu_precision * eu_recall) / (eu_precision + eu_recall))), 4)
+                ca_f1 = round((2 * ((ca_precision * ca_recall) / (ca_precision + ca_recall))), 4)
+                if (gl_precision + gl_recall) == 0:
+                    gl_f1 = 0
+                else:
+                    gl_f1 = round((2 * ((gl_precision * gl_recall) / (gl_precision + gl_recall))), 4)
+                es_f1 = round((2 * ((es_precision * es_recall) / (es_precision + es_recall))), 4)
+                en_f1 = round((2 * ((en_precision * en_recall) / (en_precision + en_recall))), 4)
+                pt_f1 = round((2 * ((pt_precision * pt_recall) / (pt_precision + pt_recall))), 4)
+
+                macro_f1 = round(((eu_f1 + ca_f1 + gl_f1 + es_f1 + en_f1 + pt_f1) / 6), 4)
+
+                print("MACRO_F1\n")
+                print(macro_f1)
+                print("tweet count\n")
+                print(tweetCount)
+
+                weighted_avg = round(
+                    (((eu_f1 * tweetCount["eu"]) + (ca_f1 * tweetCount["ca"]) + (gl_f1 * tweetCount["gl"]) + (
+                            es_f1 * tweetCount["es"]) + (en_f1 * tweetCount["en"]) + (pt_f1 * tweetCount["pt"])) / sum(
+                        tweetCount.values())), 4)
+
+                print("weighted avg\n")
+                print(weighted_avg)
+
                 f.write(str(accuracy) + "\n")
                 f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(
                     es_precision) + "  " + str(en_precision) + "  " + str(pt_precision) + "\n")
                 f.write(str(eu_recall) + "  " + str(ca_recall) + "  " + str(gl_recall) + "  " + str(
                     es_recall) + "  " + str(en_recall) + "  " + str(pt_recall) + "\n")
+                f.write(str(eu_f1) + "  " + str(ca_f1) + "  " + str(gl_f1) + "  " + str(
+                    es_f1) + "  " + str(en_f1) + "  " + str(pt_f1) + "\n")
+                f.write(str(macro_f1) + "  " + str(weighted_avg))
                 f.close()
 
 
