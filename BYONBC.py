@@ -40,8 +40,6 @@ class BYONBC:
                 for model in self.arrayModel:
                     result.append((model.calculateProbability(tweetArray[3]), model.language))
                 highest_prob = self.get_highest_prob(result)
-                print(result)
-                print("Actual answer: " + tweetArray[2])
                 if tweetArray[2] == highest_prob[1]:  # Correct
                     prob = "{:.2E}".format(Decimal(highest_prob[0]))
                     s = str(tweetArray[0] + "  " + highest_prob[1] + "  " + str(prob) + "  " + tweetArray[

@@ -62,7 +62,7 @@ def cleanTrainingData():
 def trainBYONBC():
     TweetClassifier = BYONBC()
     TweetClassifier.trainClassifier()
-    TweetClassifier.testClassifier()
+    TweetClassifier.testClassifier() # Change test file name here
 
 
 def getTweetCount(filename):
@@ -203,23 +203,18 @@ def generateEvalFileDemo(v, n, d):
 
     eu_f1 = round((2 * ((eu_precision * eu_recall) / (eu_precision + eu_recall))), 4)
     ca_f1 = round((2 * ((ca_precision * ca_recall) / (ca_precision + ca_recall))), 4)
-    gl_f1 = round((2 * ((gl_precision * gl_recall) / (gl_precision + gl_recall))), 4)
+    if (gl_precision + gl_recall) == 0:
+        gl_f1 = 0
+    else:
+        gl_f1 = round((2 * ((gl_precision * gl_recall) / (gl_precision + gl_recall))), 4)
     es_f1 = round((2 * ((es_precision * es_recall) / (es_precision + es_recall))), 4)
     en_f1 = round((2 * ((en_precision * en_recall) / (en_precision + en_recall))), 4)
     pt_f1 = round((2 * ((pt_precision * pt_recall) / (pt_precision + pt_recall))), 4)
 
     macro_f1 = round(((eu_f1 + ca_f1 + gl_f1 + es_f1 + en_f1 + pt_f1) / 6), 4)
 
-    print("MACRO_F1\n")
-    print(macro_f1)
-    print("tweet count\n")
-    print(tweetCount)
-
     weighted_avg = round((((eu_f1 * tweetCount["eu"]) + (ca_f1 * tweetCount["ca"]) + (gl_f1 * tweetCount["gl"]) + (
-                es_f1 * tweetCount["es"]) + (en_f1 * tweetCount["en"]) + (pt_f1 * tweetCount["pt"])) / tweetCount.values()), 4)
-
-    print("weighted avg\n")
-    print(weighted_avg)
+                es_f1 * tweetCount["es"]) + (en_f1 * tweetCount["en"]) + (pt_f1 * tweetCount["pt"])) / sum(tweetCount.values())), 4)
 
     f.write(str(accuracy) + "\n")
     f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(
@@ -242,27 +237,46 @@ def runDemoTest(BYONBC):
     """
 
     TweetClassifier1 = NBLanguageClassifier(0, 1, 0.0)
-    TweetClassifier1.trainClassifier()
+    print("Training Tweet Language Classifier: v = 0, n = 1, d = 0.0")
+    TweetClassifier1.trainClassifier() # Change test file name here
+    print("Testing Tweet Language Classifier: v = 0, n = 1, d = 0.0")
     TweetClassifier1.testClassifier()
+    print("Generating eval file for  Tweet Language Classifier: v = 0, n = 1, d = 0.0")
     generateEvalFileDemo(0, 1, 0.0)
+    print("\n\n\n")
 
     TweetClassifier2 = NBLanguageClassifier(1, 2, round(0.5, 1))
+    print("Training Tweet Language Classifier: v = 1, n = 2, d = 0.5")
     TweetClassifier2.trainClassifier()
+    print("Testing Tweet Language Classifier: v = 1, n = 2, d = 0.5")
     TweetClassifier2.testClassifier()
+    print("Generating eval file for Tweet Language Classifier: v = 1, n = 2, d = 0.5")
     generateEvalFileDemo(1, 2, round(0.5, 1))
+    print("\n\n\n")
 
     TweetClassifier3 = NBLanguageClassifier(1, 3, 1.0)
+    print("Training Tweet Language Classifier: v = 1, n = 3, d = 1.0")
     TweetClassifier3.trainClassifier()
+    print("Testing Tweet Language Classifier: v = 1, n = 3, d = 1.0")
     TweetClassifier3.testClassifier()
+    print("Generating eval file for Tweet Language Classifier: v = 1, n = 3, d = 1.0")
     generateEvalFileDemo(1, 3, 1.0)
+    print("\n\n\n")
 
     TweetClassifier4 = NBLanguageClassifier(2, 2, round(0.3, 1))
+    print("Training Tweet Language Classifier: v = 2, n = 2, d = 0.3")
     TweetClassifier4.trainClassifier()
+    print("Testing Tweet Language Classifier: v = 2, n = 2, d = 0.3")
     TweetClassifier4.testClassifier()
+    print("Generating eval file for Tweet Language Classifier: v = 2, n = 2, d = 0.3")
     generateEvalFileDemo(2, 2, round(0.3, 1))
+    print("\n\n\n")
 
-    trainBYONBC()
+    print("Training & testing Tweet Language Classifier BYOM.")
+    trainBYONBC() # Change test file name here
+    print("Generating eval file for Tweet Language Classifier BYOM.")
     generateBYONBCEvalFiles()
+    print("\n\n\n")
 
 
 # 1. your BYOM
@@ -386,16 +400,8 @@ def generateBYONBCEvalFiles():
 
     macro_f1 = round(((eu_f1 + ca_f1 + gl_f1 + es_f1 + en_f1 + pt_f1) / 6), 4)
 
-    print("MACRO_F1\n")
-    print(macro_f1)
-    print("tweet count\n")
-    print(tweetCount)
-
     weighted_avg = round((((eu_f1 * tweetCount["eu"]) + (ca_f1 * tweetCount["ca"]) + (gl_f1 * tweetCount["gl"]) + (
             es_f1 * tweetCount["es"]) + (en_f1 * tweetCount["en"]) + (pt_f1 * tweetCount["pt"])) / sum(tweetCount.values())), 4)
-
-    print("weighted avg\n")
-    print(weighted_avg)
 
     f.write(str(accuracy) + "\n")
     f.write(str(eu_precision) + "  " + str(ca_precision) + "  " + str(gl_precision) + "  " + str(

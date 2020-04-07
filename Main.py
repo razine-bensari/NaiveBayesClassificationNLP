@@ -10,25 +10,14 @@ from BYONBC import BYONBC
 
 # NaiveBayesClassifierUtils.cleanTrainingData()
 
-NaiveBayesClassifierUtils.trainAllNBLanguageClassifier()
-NaiveBayesClassifierUtils.generateAllEvalFiles()
-NaiveBayesClassifierUtils.generateStatsFile()
+# NaiveBayesClassifierUtils.trainAllNBLanguageClassifier()
+# NaiveBayesClassifierUtils.generateAllEvalFiles()
+# NaiveBayesClassifierUtils.generateStatsFile()
+#
+# NaiveBayesClassifierUtils.trainBYONBC()
+# NaiveBayesClassifierUtils.generateBYONBCEvalFiles()
 
-
-
-# NaiveBayesClassifierUtils.runDemoTest(BYONBC())
-
-
-
-
-
-
-NaiveBayesClassifierUtils.trainBYONBC()
-NaiveBayesClassifierUtils.generateBYONBCEvalFiles()
-
-
-
-
+NaiveBayesClassifierUtils.runDemoTest(BYONBC())
 
 # TweetClassifier = NBLanguageClassifier(0, 1, 0.0)
 # TweetClassifier.trainClassifier()
